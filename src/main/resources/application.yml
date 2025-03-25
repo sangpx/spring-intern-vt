@@ -1,0 +1,10 @@
+server:
+  port: 8080
+openapi:
+  service:
+    api-docs: api-service-dev
+    serverUrl: http://localhost:${server.port}
+    serverName: Server Dev
+    title: API Document
+    version: v1.0.0
+    description: Server Dev
