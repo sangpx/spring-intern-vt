@@ -44,7 +44,7 @@ public class OpenApiConfig {
         return GroupedOpenApi
                 .builder()
                 .group("api-service")
-                .packagesToScan("com.project_intern.project_intern.controller") //scan tat ca cac controller nam trong package do
+                .packagesToScan("com.demo.project_intern.controller") //scan tat ca cac controller nam trong package do
                 .build();
     }
 }
