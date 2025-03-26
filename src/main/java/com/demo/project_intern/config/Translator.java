@@ -15,7 +15,7 @@ public class Translator { // chuyen doi giua cac ngon ngu voi nhau
     public Translator(@Autowired ResourceBundleMessageSource messageSource) {
         Translator.messageSource = messageSource;
     }
-
+    //TODO
     public static String toLocale(String messageCode) {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(messageCode, null, locale);

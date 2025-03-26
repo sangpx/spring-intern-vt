@@ -2,9 +2,13 @@ package com.demo.project_intern.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
@@ -25,4 +29,12 @@ public class UserEntity extends AbstractEntity<Long>  {
     private String phone;
     @Column(name = "dob")
     private LocalDate dob;
+    @Column(name = "address")
+    private String address;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<RoleEntity> roles = new HashSet<>();
 }

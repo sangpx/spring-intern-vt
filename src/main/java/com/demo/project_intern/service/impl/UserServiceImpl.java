@@ -1,9 +1,9 @@
 package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
-import com.demo.project_intern.dto.request.UserCreateRequest;
-import com.demo.project_intern.dto.request.UserUpdateRequest;
-import com.demo.project_intern.dto.user.UserDto;
+import com.demo.project_intern.dto.request.user.UserCreateRequest;
+import com.demo.project_intern.dto.request.user.UserUpdateRequest;
+import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.UserRepository;

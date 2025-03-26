@@ -1,9 +1,6 @@
-package com.demo.project_intern.dto.request;
+package com.demo.project_intern.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -11,11 +8,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserUpdateRequest {
+public class UserDto {
     private String userName;
     private String fullName;
     private String email;
     private String phone;
-    private String password;
     private LocalDate dob;
 }

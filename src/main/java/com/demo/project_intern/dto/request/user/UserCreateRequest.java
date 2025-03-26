@@ -1,5 +1,5 @@
 
-package com.demo.project_intern.dto.request;
+package com.demo.project_intern.dto.request.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

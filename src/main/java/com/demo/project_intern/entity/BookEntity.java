@@ -1,15 +1,13 @@
 package com.demo.project_intern.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
@@ -27,4 +25,12 @@ public class BookEntity extends AbstractEntity<Long>  {
     private String publisher;
     @Column(name = "published_year")
     private LocalDate publishedYear;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "book_category",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "catetory_id")
+    )
+    private Set<CategoryEntity> categories = new HashSet<>();
 }
