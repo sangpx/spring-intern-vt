@@ -1,9 +1,9 @@
 package com.demo.project_intern.controller;
 
+import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
-import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Tag(name = "User Controller")
 @RequiredArgsConstructor
-public class UserController {
+public class BookController {
 
     private final UserService userService;
 
