@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "category")
+@Table(name = "category", uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class CategoryEntity extends AbstractEntity<Long>  {
     @Column(name = "code")
     private String code;

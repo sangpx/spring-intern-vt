@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -35,8 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getUsers() {
-        List<UserEntity> listUser = userRepository.findAll();
-        return listUser.stream()
+        return userRepository.findAll()
+                .stream()
                 .map(user -> mapper.map(user, UserDto.class))
                 .toList();
     }
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
         user.setPhone(request.getPhone());
         user.setPassword(request.getPassword());
         user.setDob(request.getDob());
+        user.setUpdatedAt(LocalDate.now());
         userRepository.save(user);
         return mapper.map(user, UserDto.class);
     }

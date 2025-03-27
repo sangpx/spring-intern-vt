@@ -1,5 +1,6 @@
 package com.demo.project_intern.config;
 
+import com.demo.project_intern.constant.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -19,5 +20,13 @@ public class Translator { // chuyen doi giua cac ngon ngu voi nhau
     public static String toLocale(String messageCode) {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(messageCode, null, locale);
+    }
+
+    public static String getSuccessMessage(String action, EntityType entity) {
+        return messageSource.getMessage("success." + action, new Object[]{entity.getDisplayName()}, LocaleContextHolder.getLocale());
+    }
+
+    public static String getErrorMessage(String action, EntityType entity) {
+        return messageSource.getMessage("error." + action, new Object[]{entity.getDisplayName()}, LocaleContextHolder.getLocale());
     }
 }
