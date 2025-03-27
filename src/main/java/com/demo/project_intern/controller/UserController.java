@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    @Operation(method = "PUT", summary = "Delete User", description = "API Delete User")
+    @Operation(method = "DELETE", summary = "Delete User", description = "API Delete User")
     public String deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
         return "success";

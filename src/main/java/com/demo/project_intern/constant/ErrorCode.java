@@ -18,6 +18,10 @@ public enum ErrorCode {
     INVALID_DOB(1008, "You age must be at least {min} ", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_EXCEPTION(1009, "Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_KEY(1010, "Invalid key", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED(1011, "Category existed in system", HttpStatus.BAD_REQUEST),
+    BOOK_EXISTED(1012, "Book existed in system", HttpStatus.BAD_REQUEST),
+    ROLE_EXISTED(1013, "Role existed in system", HttpStatus.BAD_REQUEST),
+    PERMISSION_EXISTED(1014, "Permission existed in system", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;

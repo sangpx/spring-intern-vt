@@ -1,4 +1,3 @@
-
 package com.demo.project_intern.dto.request.user;
 
 import jakarta.validation.constraints.Email;
@@ -25,4 +24,5 @@ public class UserCreateRequest {
     private String email;
     private String phone;
     private LocalDate dob;
+    private String address;
 }
