@@ -18,13 +18,15 @@ public class OpenApiConfig {
                            @Value("${openapi.service.version}") String version,
                            @Value("${openapi.service.description}") String description,
                            @Value("${openapi.service.serverUrl}") String serverUrl,
-                           @Value("${openapi.service.serverName}") String serverName) {
+                           @Value("${openapi.service.serverName}") String serverName,
+                           @Value("${openapi.license.name}") String nameLicense,
+                           @Value("${openapi.license.url}") String urlLicense) {
         return new OpenAPI()
                 .info(new Info()
                     .title(title)
                     .version(version)
                     .description(description)
-                    .license(new License().name("API License").url("http://domain.vn/license")))
+                    .license(new License().name(nameLicense).url(urlLicense)))
                 .servers(List.of(new Server()
                         .url(serverUrl)
                         .description(serverName)))

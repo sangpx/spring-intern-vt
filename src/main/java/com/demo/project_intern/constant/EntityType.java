@@ -8,7 +8,7 @@ public enum EntityType {
     CATEGORY("Category"),
     POST("Post"),
     ROLE("Role"),
-    PERMISSION("permission"),
+    PERMISSION("Permission"),
     COMMENT("Comment"),
     POST_LIKE("Post_Like"),
     BORROW_BOOK("Borrow_Book"),
