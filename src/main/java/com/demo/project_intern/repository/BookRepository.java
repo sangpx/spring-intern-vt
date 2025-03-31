@@ -9,10 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface BookRepository extends JpaRepository<BookEntity, Long> {
+    Optional<BookEntity> findByCode(String code);
+
     boolean existsByCode(String code);
     @Query("SELECT b FROM BookEntity b WHERE " +
             "(:keyword IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +

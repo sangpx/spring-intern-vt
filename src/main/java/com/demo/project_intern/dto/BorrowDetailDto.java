@@ -1,21 +1,16 @@
 package com.demo.project_intern.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.Set;
+import lombok.*;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class BorrowDetailDto {
-    private Long id;
-    private String code;
-    private String name;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Set<PermissionDto> permissions;
+    private LocalDate actualReturnDate;
+    private int quantity;
+    private String status;
+    private Long bookId;
+    private Long borrowBookId;
 }

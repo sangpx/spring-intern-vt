@@ -64,7 +64,7 @@ public class RoleController {
 
     @DeleteMapping("/{roleId}")
     @Operation(method = "DELETE", summary = "Delete Role", description = "API Delete Role")
-    public String deleteUser(@PathVariable("roleId") Long roleId) {
+    public String deleteRole(@PathVariable("roleId") Long roleId) {
         roleService.deleteRole(roleId);
         return "Deleted Successfully!";
     }

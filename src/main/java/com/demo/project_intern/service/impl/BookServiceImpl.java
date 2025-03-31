@@ -38,11 +38,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto createBook(BookCreateRequest request) {
-        BookEntity bookEntity = mapper.map(request, BookEntity.class);
-        if(bookRepository.existsByCode(request.getCode())) {
+        if(bookRepository.findByCode(request.getCode()).isPresent()) {
             throw new BaseLibraryException(ErrorCode.BOOK_EXISTED);
         }
-        bookEntity.setCategories(getCategoryEntity(request.getCategories()));
+        BookEntity bookEntity = mapper.map(request, BookEntity.class);
+        Set<CategoryEntity> categoryEntities = getCategoryEntity(request.getCategories());
+        bookEntity.setCategories(categoryEntities.isEmpty() ? Collections.emptySet() : categoryEntities);
         bookRepository.save(bookEntity);
         return mapper.map(bookEntity, BookDto.class);
     }
@@ -100,6 +101,27 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(CategoryDto::getCode)
                 .collect(Collectors.toSet());
-        return new HashSet<>(categoryRepository.findByCodeIn(categoryCodes));
+
+        if (categoryCodes.isEmpty()) {
+            throw new BaseLibraryException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+
+        // Tìm danh mục có trong DB
+        List<CategoryEntity> categoryEntities = categoryRepository.findByCodeIn(categoryCodes);
+
+        // Kiểm tra danh mục nào không tìm thấy
+        Set<String> foundCodes = categoryEntities.stream()
+                .map(CategoryEntity::getCode)
+                .collect(Collectors.toSet());
+
+        Set<String> missingCategories = new HashSet<>(categoryCodes);
+        missingCategories.removeAll(foundCodes);
+
+        // Nếu có danh mục không tồn tại trong DB → bắn exception
+        if (!missingCategories.isEmpty()) {
+            throw new BaseLibraryException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+        //Return list category hợp lệ
+        return new HashSet<>(categoryEntities);
     }
 }
