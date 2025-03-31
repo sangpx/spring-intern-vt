@@ -1,5 +1,7 @@
 package com.demo.project_intern.controller;
 
+import com.demo.project_intern.config.Translator;
+import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
@@ -27,6 +29,7 @@ public class UserController {
     @Operation(method = "POST", summary = "Create User", description = "API Create New User")
     public ResponseData<UserDto> createUser(@RequestBody @Valid UserCreateRequest request) {
         return ResponseData.<UserDto>builder()
+                .message(Translator.getSuccessMessage("add", EntityType.USER))
                 .data(userService.createUser(request))
                 .build();
     }
@@ -35,6 +38,7 @@ public class UserController {
     @Operation(method = "GET", summary = "Get List Users", description = "API Get List Users")
     public ResponseData<List<UserDto>> getUsers() {
         return ResponseData.<List<UserDto>>builder()
+                .message(Translator.getSuccessMessage("getList", EntityType.USER))
                 .data(userService.getUsers())
                 .build();
     }
@@ -43,6 +47,7 @@ public class UserController {
     @Operation(method = "GET", summary = "Get Detail User", description = "API Get Detail User")
     public ResponseData<UserDto> getUser(@PathVariable("userId") Long userId) {
         return ResponseData.<UserDto>builder()
+                .message(Translator.getSuccessMessage("getDetail", EntityType.USER))
                 .data(userService.getUser(userId))
                 .build();
     }
@@ -51,6 +56,7 @@ public class UserController {
     @Operation(method = "PUT", summary = "Update User", description = "API Update User")
     public ResponseData<UserDto> updateUser(@PathVariable("userId") Long userId, @RequestBody UserUpdateRequest request) {
         return ResponseData.<UserDto>builder()
+                .message(Translator.getSuccessMessage("update", EntityType.USER))
                 .data(userService.updateUser(userId, request))
                 .build();
     }
@@ -59,6 +65,6 @@ public class UserController {
     @Operation(method = "DELETE", summary = "Delete User", description = "API Delete User")
     public String deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
-        return "success";
+        return "Deleted Successfully!";
     }
 }

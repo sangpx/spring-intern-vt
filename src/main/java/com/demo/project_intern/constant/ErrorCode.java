@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 
 @Getter
 public enum ErrorCode {
+    //TODO: config dynamic message from translator
     USER_EXISTED(1001, "User existed in system", HttpStatus.NOT_FOUND),
     USER_NOT_EXISTED(1002, "User not existed", HttpStatus.NOT_FOUND),
     RESOURCE_NOT_FOUND(1003, "Not Found", HttpStatus.NOT_FOUND),
@@ -22,6 +23,8 @@ public enum ErrorCode {
     BOOK_EXISTED(1012, "Book existed in system", HttpStatus.BAD_REQUEST),
     ROLE_EXISTED(1013, "Role existed in system", HttpStatus.BAD_REQUEST),
     PERMISSION_EXISTED(1014, "Permission existed in system", HttpStatus.BAD_REQUEST),
+    BORROW_BOOK_EXISTED(1015, "Borrow Book existed in system", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(1016, "Category Not Found", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;

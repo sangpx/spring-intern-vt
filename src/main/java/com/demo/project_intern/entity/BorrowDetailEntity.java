@@ -1,28 +1,31 @@
-//package com.demo.project_intern.entity;
-//
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.Table;
-//import lombok.*;
-//
-//import java.time.LocalDate;
-//
-//@EqualsAndHashCode(callSuper = true)
-//@Entity
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Builder
-//@Table(name = "book")
-//public class BorrowDetailEntity extends AbstractEntity<Long>  {
-//    @Column(name = "title")
-//    private String title;
-//    @Column(name = "description")
-//    private String description;
-//    @Column(name = "author")
-//    private String author;
-//    @Column(name = "publisher")
-//    private String publisher;
-//    @Column(name = "published_year")
-//    private LocalDate publishedYear;
-//}
+package com.demo.project_intern.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "borrow_detail")
+public class BorrowDetailEntity extends AbstractEntity<Long>  {
+    @Column(name = "actual_return_date")
+    private LocalDate actualReturnDate;
+    @Column(name = "quantity")
+    private int quantity;
+    @Column(name = "status")
+    private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "borrow_book_id", nullable = false)
+    private BorrowBookEntity borrowBook;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private BookEntity book;
+
+}

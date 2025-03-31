@@ -64,7 +64,7 @@ public class PermissionController {
 
     @DeleteMapping("/{permissionId}")
     @Operation(method = "DELETE", summary = "Delete Permission", description = "API Delete Permission")
-    public String deleteUser(@PathVariable("permissionId") Long permissionId) {
+    public String deletePermission(@PathVariable("permissionId") Long permissionId) {
         permissionService.deletePermission(permissionId);
         return "Deleted Successfully!";
     }

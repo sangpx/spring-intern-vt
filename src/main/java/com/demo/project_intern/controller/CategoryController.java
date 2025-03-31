@@ -65,7 +65,7 @@ public class CategoryController {
 
     @DeleteMapping("/{categoryId}")
     @Operation(method = "DELETE", summary = "Delete Category", description = "API Delete Category")
-    public String deleteUser(@PathVariable("categoryId") Long categoryId) {
+    public String deleteCategory(@PathVariable("categoryId") Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return "Deleted Successfully!";
     }

@@ -37,4 +37,10 @@ public class BookEntity extends AbstractEntity<Long>  {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<CategoryEntity> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<PostEntity> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<BorrowDetailEntity> borrowDetails = new ArrayList<>();
 }

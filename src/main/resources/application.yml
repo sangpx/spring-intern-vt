@@ -26,5 +26,8 @@ openapi:
     title: API Document
     version: v1.0.0
     description: Server Dev
+  license:
+    name: API License
+    url: https://en.wikipedia.org/wiki/Software_license
 api:
   base-path: /api/v1/library

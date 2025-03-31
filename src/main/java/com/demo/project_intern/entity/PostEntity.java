@@ -1,28 +1,36 @@
-//package com.demo.project_intern.entity;
-//
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.Table;
-//import lombok.*;
-//
-//import java.time.LocalDate;
-//
-//@EqualsAndHashCode(callSuper = true)
-//@Entity
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Builder
-//@Table(name = "book")
-//public class PostEntity extends AbstractEntity<Long>  {
-//    @Column(name = "title")
-//    private String title;
-//    @Column(name = "description")
-//    private String description;
-//    @Column(name = "author")
-//    private String author;
-//    @Column(name = "publisher")
-//    private String publisher;
-//    @Column(name = "published_year")
-//    private LocalDate publishedYear;
-//}
+package com.demo.project_intern.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "post")
+public class PostEntity extends AbstractEntity<Long>  {
+    @Column(name = "title")
+    private String title;
+    @Column(name = "content")
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private BookEntity book;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostLikeEntity> postLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<CommentEntity> comments = new ArrayList<>();
+}
