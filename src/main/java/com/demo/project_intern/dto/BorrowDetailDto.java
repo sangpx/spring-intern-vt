@@ -9,8 +9,7 @@ import java.time.LocalDate;
 @Builder
 public class BorrowDetailDto {
     private LocalDate actualReturnDate;
+    //TODO: validation quantity
     private int quantity;
-    private String status;
     private Long bookId;
-    private Long borrowBookId;
 }

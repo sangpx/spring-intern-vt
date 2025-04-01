@@ -71,6 +71,7 @@ public class BookController {
 
     @GetMapping("/paging")
     @Operation(method = "GET", summary = "Get Paging Books", description = "API Get Paging Books")
+    //TODO: dua param vao 1 class
     public ResponseData<Page<BookDto>> getPagingBooks(@RequestParam(required = false) String keyword,
                                                                @RequestParam(required = false) String code,
                                                                @RequestParam() int page,

@@ -13,7 +13,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper() {
-        // Tạo object và cấu hình
+        // create object and config
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);

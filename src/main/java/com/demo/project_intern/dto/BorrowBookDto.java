@@ -12,5 +12,6 @@ public class BorrowBookDto {
     private LocalDate borrowDate;
     private LocalDate expectedReturnDate;
     private Long userId;
+    private String code;
     private Set<BorrowDetailDto> borrowDetails;
 }

@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long userId, UserUpdateRequest request) {
+        //TODO: validation user_name
         UserEntity user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
