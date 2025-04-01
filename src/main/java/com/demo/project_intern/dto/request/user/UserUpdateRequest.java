@@ -15,4 +15,5 @@ public class UserUpdateRequest {
     private String phone;
     private String password;
     private LocalDate dob;
+    private String address;
 }

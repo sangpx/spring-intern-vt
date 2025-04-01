@@ -3,6 +3,7 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.CategoryDto;
+import com.demo.project_intern.dto.SearchKeywordQuery;
 import com.demo.project_intern.dto.request.category.CategoryCreateRequest;
 import com.demo.project_intern.dto.request.category.CategoryUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
@@ -72,15 +73,10 @@ public class CategoryController {
 
     @GetMapping("/paging")
     @Operation(method = "GET", summary = "Get Paging Categories", description = "API Get Paging Categories")
-    public ResponseData<Page<CategoryDto>> getPagingCategories(@RequestParam(required = false) String keyword,
-                                                               @RequestParam(required = false) String code,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "name") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    public ResponseData<Page<CategoryDto>> getPagingCategories(@RequestBody SearchKeywordQuery request) {
         return ResponseData.<Page<CategoryDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
-                .data(categoryService.searchCategories(keyword, code, page, size, sortBy, direction))
+                .data(categoryService.searchCategories(request))
                 .build();
     }
 }

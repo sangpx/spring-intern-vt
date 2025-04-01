@@ -2,6 +2,7 @@ package com.demo.project_intern.entity;
 
 import com.demo.project_intern.constant.BorrowStatus;
 import com.demo.project_intern.constant.BorrowType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,8 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -33,5 +35,6 @@ public class BorrowBookEntity extends AbstractEntity<Long>  {
     private UserEntity user;
 
     @OneToMany(mappedBy = "borrowBook", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<BorrowDetailEntity> borrowDetails = new ArrayList<>();
 }
