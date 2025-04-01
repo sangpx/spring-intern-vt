@@ -8,6 +8,8 @@ import com.demo.project_intern.dto.request.borrowBook.BorrowBookCreateRequest;
 import com.demo.project_intern.dto.request.borrowBook.BorrowBookUpdateRequest;
 import com.demo.project_intern.entity.BookEntity;
 import com.demo.project_intern.entity.BorrowBookEntity;
+import com.demo.project_intern.entity.BorrowDetailEntity;
+import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.BookRepository;
 import com.demo.project_intern.repository.BorrowBookRepository;
@@ -24,6 +26,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -40,20 +45,42 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     @Override
     public BorrowBookDto createBorrowBook(BorrowBookCreateRequest request) {
         BorrowBookEntity borrowBookEntity = mapper.map(request, BorrowBookEntity.class);
-        //TODO: lay ra thong tin nguoi dung
-
-        //tim xem da ton tai code phieu muon hay chua
-        if(borrowBookRepository.existsByCode(request.getCode())) {
-            throw new BaseLibraryException(ErrorCode.BORROW_BOOK_EXISTED);
-        }
-
-        //TODO
+        //TODO: get info user
 
 
-
+        //get list bookId from request
+        List<Long> bookIdRequests = request.getBorrowDetails()
+                        .stream()
+                        .map(BorrowDetailDto::getBookId)
+                        .toList();
+        Map<Long, BookEntity> bookMap = bookRepository.findAllById(bookIdRequests)
+                        .stream().collect(Collectors.toMap(BookEntity::getId, book -> book));
+        //create borrowDetail
+        List<BorrowDetailEntity> borrowDetailEntities = request.getBorrowDetails()
+                .stream()
+                .map(detailDto -> {
+                    BorrowDetailEntity detailEntity = mapper.map(detailDto, BorrowDetailEntity.class);
+                    detailEntity.setBorrowBook(borrowBookEntity);
+                    detailEntity.setQuantity(detailDto.getQuantity());
+                    //TODO: set bookId
+                    detailEntity.setBook(bookMap.get(detailDto.getBookId()));
+                    return detailEntity;
+                })
+                .collect(Collectors.toList());
+        //create borrowBook
+        borrowBookEntity.setCode(UUID.randomUUID().toString());
         borrowBookEntity.setBorrowStatus(BorrowStatus.BORROWED);
+        borrowBookEntity.setBorrowDetails(borrowDetailEntities);
+
+        //set fake user
+        UserEntity user = new UserEntity();
+        user.setId(1L);
+        borrowBookEntity.setUser(user);
+
         borrowBookRepository.save(borrowBookEntity);
-        return mapper.map(borrowBookEntity, BorrowBookDto.class);
+        BorrowBookDto borrowBookDto = mapper.map(borrowBookEntity, BorrowBookDto.class);
+        borrowBookDto.setUserId(user.getId());
+        return borrowBookDto;
     }
 
     @Override

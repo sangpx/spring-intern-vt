@@ -17,8 +17,6 @@ public class BorrowDetailEntity extends AbstractEntity<Long>  {
     private LocalDate actualReturnDate;
     @Column(name = "quantity")
     private int quantity;
-    @Column(name = "status")
-    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "borrow_book_id", nullable = false)

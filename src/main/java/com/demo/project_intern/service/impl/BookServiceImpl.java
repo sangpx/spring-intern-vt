@@ -90,8 +90,8 @@ public class BookServiceImpl implements BookService {
                             ? Sort.by(sortBy).descending()
                             : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<BookEntity> pageBooks = bookRepository.searchBooks(keyword, code, pageable);
-        return pageBooks.map(pageBook -> mapper.map(pageBook, BookDto.class));
+        return bookRepository.searchBooks(keyword, code, pageable);
+
     }
 
     private Set<CategoryEntity> getCategoryEntity (Set<CategoryDto> categoryDtos) {

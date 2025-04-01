@@ -12,7 +12,6 @@ public enum EntityType {
     COMMENT("Comment"),
     POST_LIKE("Post_Like"),
     BORROW_BOOK("Borrow_Book"),
-    BORROW_DETAIL("Borrow_Detail"),
     BOOK("Book");
 
     private final String displayName;
@@ -20,5 +19,4 @@ public enum EntityType {
     EntityType(String displayName) {
         this.displayName = displayName;
     }
-
 }

@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
         return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
     }
 
-    //exception error code 403: UnAuthorization
+    //exception error code 403: UnAuthorizationv
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ResponseData> handlingAccessDeniedException(AccessDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;

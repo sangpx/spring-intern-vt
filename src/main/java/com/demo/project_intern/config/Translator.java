@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 @Component
-public class Translator { // chuyen doi giua cac ngon ngu voi nhau
+public class Translator { // switch multi-language
 
     private static ResourceBundleMessageSource messageSource;
 

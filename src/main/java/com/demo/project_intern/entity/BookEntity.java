@@ -43,4 +43,6 @@ public class BookEntity extends AbstractEntity<Long>  {
 
     @OneToMany(mappedBy = "book")
     private List<BorrowDetailEntity> borrowDetails = new ArrayList<>();
+
+    //TODO: add field quantity
 }

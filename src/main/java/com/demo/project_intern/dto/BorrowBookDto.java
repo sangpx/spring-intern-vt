@@ -1,5 +1,6 @@
 package com.demo.project_intern.dto;
 
+import com.demo.project_intern.constant.BorrowStatus;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.Set;
