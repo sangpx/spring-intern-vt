@@ -24,7 +24,9 @@ public enum ErrorCode {
     ROLE_EXISTED(1013, "Role existed in system", HttpStatus.BAD_REQUEST),
     PERMISSION_EXISTED(1014, "Permission existed in system", HttpStatus.BAD_REQUEST),
     BORROW_BOOK_EXISTED(1015, "Borrow Book existed in system", HttpStatus.BAD_REQUEST),
-    CATEGORY_NOT_FOUND(1016, "Category Not Found", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(1016, "Category Not Found", HttpStatus.NOT_FOUND),
+    USERNAME_EXISTED(1017, "Username already exists, please choose another username", HttpStatus.BAD_REQUEST),
+    CODE_EXISTED(1018, "Code already exists, please choose another code", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;

@@ -1,6 +1,7 @@
 package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
+import com.demo.project_intern.dto.SearchKeywordQuery;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
@@ -11,6 +12,7 @@ import com.demo.project_intern.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,25 +46,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(Long userId) {
-        UserEntity user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND) {
-                });
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         return mapper.map(user, UserDto.class);
     }
 
     @Override
     public UserDto updateUser(Long userId, UserUpdateRequest request) {
-        //TODO: validation user_name
-        UserEntity user = userRepository
-                .findById(userId)
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
+        // Check if field userName is modified
+        if(!user.getUserName().equals(request.getUserName())) {
+            // Kiểm tra username đã tồn tại chưa (loại trừ user hiện tại)
+            boolean isUsernameTaken = userRepository.existsByUserNameAndIdNot(request.getUserName(), userId);
+            if (isUsernameTaken) {
+                throw new BaseLibraryException(ErrorCode.USERNAME_EXISTED);
+            }
+        }
         user.setUserName(request.getUserName());
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setPassword(request.getPassword());
         user.setDob(request.getDob());
+        user.setAddress(request.getAddress());
         user.setUpdatedAt(LocalDate.now());
         userRepository.save(user);
         return mapper.map(user, UserDto.class);
@@ -71,8 +78,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         //check xem user entity co ton tai hay khong
-        UserEntity user = userRepository
-                .findById(userId)
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         userRepository.delete(user);
     }
