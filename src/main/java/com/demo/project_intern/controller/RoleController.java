@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class RoleController {
 
     private final RoleService roleService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     @Operation(method = "POST", summary = "Create Role", description = "API Create New Role")
     public ResponseData<RoleDto> createRole(@RequestBody @Valid RoleCreateRequest request) {
@@ -35,6 +37,7 @@ public class RoleController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     @Operation(method = "GET", summary = "Get List Roles", description = "API Get List Roles")
     public ResponseData<List<RoleDto>> getRoles() {
@@ -44,6 +47,7 @@ public class RoleController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{roleId}")
     @Operation(method = "GET", summary = "Get Detail Role", description = "API Get Detail Role")
     public ResponseData<RoleDto> getRole(@PathVariable("roleId") Long roleId) {
@@ -53,6 +57,7 @@ public class RoleController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{roleId}")
     @Operation(method = "PUT", summary = "Update Role", description = "API Update Role")
     public ResponseData<RoleDto> updateRole(@PathVariable("roleId") Long roleId, @RequestBody RoleUpdateRequest request) {
@@ -62,6 +67,7 @@ public class RoleController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{roleId}")
     @Operation(method = "DELETE", summary = "Delete Role", description = "API Delete Role")
     public String deleteRole(@PathVariable("roleId") Long roleId) {
@@ -69,6 +75,7 @@ public class RoleController {
         return "Deleted Successfully!";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/paging")
     @Operation(method = "GET", summary = "Get Paging Roles", description = "API Get Paging Roles")
     public ResponseData<Page<RoleDto>> getPagingRoles(@RequestParam(required = false) String keyword,

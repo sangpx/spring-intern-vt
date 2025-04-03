@@ -12,7 +12,10 @@ public enum EntityType {
     COMMENT("Comment"),
     POST_LIKE("Post_Like"),
     BORROW_BOOK("Borrow_Book"),
-    BOOK("Book");
+    BOOK("Book"),
+    AUTHENTICATION("Authentication"),
+    REFRESH("Refresh"),
+    INTROSPECT("Introspect");
 
     private final String displayName;
 

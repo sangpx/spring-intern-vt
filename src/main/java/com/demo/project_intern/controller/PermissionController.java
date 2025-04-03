@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class PermissionController {
 
     private final PermissionService permissionService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     @Operation(method = "POST", summary = "Create Permission", description = "API Create New Permission")
     public ResponseData<PermissionDto> createPermission(@RequestBody @Valid PermissionCreateRequest request) {
@@ -35,6 +37,7 @@ public class PermissionController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     @Operation(method = "GET", summary = "Get List Permissions", description = "API Get List Permissions")
     public ResponseData<List<PermissionDto>> getPermissions() {
@@ -44,6 +47,7 @@ public class PermissionController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{permissionId}")
     @Operation(method = "GET", summary = "Get Detail Permission", description = "API Get Detail Permission")
     public ResponseData<PermissionDto> getPermission(@PathVariable("permissionId") Long permissionId) {
@@ -53,6 +57,7 @@ public class PermissionController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{permissionId}")
     @Operation(method = "PUT", summary = "Update Permission", description = "API Update Permission")
     public ResponseData<PermissionDto> updatePermission(@PathVariable("permissionId") Long permissionId, @RequestBody PermissionUpdateRequest request) {
@@ -62,6 +67,7 @@ public class PermissionController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{permissionId}")
     @Operation(method = "DELETE", summary = "Delete Permission", description = "API Delete Permission")
     public String deletePermission(@PathVariable("permissionId") Long permissionId) {
@@ -69,6 +75,7 @@ public class PermissionController {
         return "Deleted Successfully!";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/paging")
     @Operation(method = "GET", summary = "Get Paging Categories", description = "API Get Paging Categories")
     public ResponseData<Page<PermissionDto>> getPagingCategories(@RequestParam(required = false) String keyword,

@@ -21,13 +21,7 @@ public abstract class AbstractEntity<T extends Serializable> implements Serializ
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDate createdAt;
-    @Column(name = "created_by")
-    @CreatedBy
-    private T createdBy;
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDate updatedAt;
-    @Column(name = "updated_by")
-    @LastModifiedBy
-    private T updatedBy;
 }

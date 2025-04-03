@@ -13,5 +13,5 @@ public interface CategoryService {
     CategoryDto getCategory(Long categoryId);
     CategoryDto updateCategory(Long categoryId, CategoryUpdateRequest request);
     void deleteCategory(Long categoryId);
-    Page<CategoryDto> searchCategories (String keyword, String code, int page, int size, String sortBy, String direction);
+//    Page<CategoryDto> searchCategories (String keyword, String code, int page, int size, String sortBy, String direction);
 }

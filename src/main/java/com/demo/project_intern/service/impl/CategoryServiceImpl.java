@@ -73,13 +73,13 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.delete(category);
     }
 
-    @Override
-    public Page<CategoryDto> searchCategories(String keyword, String code, int page, int size, String sortBy, String direction) {
-        Sort sort = "desc".equalsIgnoreCase(direction)
-                            ? Sort.by(sortBy).descending()
-                            : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<CategoryEntity> pageCategories = categoryRepository.searchCategories(keyword, code, pageable);
-        return pageCategories.map(pageCategory -> mapper.map(pageCategory, CategoryDto.class));
-    }
+//    @Override
+//    public Page<CategoryDto> searchCategories(String keyword, String code, int page, int size, String sortBy, String direction) {
+//        Sort sort = "desc".equalsIgnoreCase(direction)
+//                            ? Sort.by(sortBy).descending()
+//                            : Sort.by(sortBy).ascending();
+//        Pageable pageable = PageRequest.of(page, size, sort);
+//        Page<CategoryEntity> pageCategories = categoryRepository.searchCategories(keyword, code, pageable);
+//        return pageCategories.map(pageCategory -> mapper.map(pageCategory, CategoryDto.class));
+//    }
 }

@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     @Operation(method = "POST", summary = "Create Book", description = "API Create New Book")
     public ResponseData<BookDto> createBook(@RequestBody @Valid BookCreateRequest request) {
@@ -53,6 +55,7 @@ public class BookController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{bookId}")
     @Operation(method = "PUT", summary = "Update Book", description = "API Update Book")
     public ResponseData<BookDto> updateBook(@PathVariable("bookId") Long bookId, @RequestBody BookUpdateRequest request) {
@@ -62,6 +65,7 @@ public class BookController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{bookId}")
     @Operation(method = "DELETE", summary = "Delete Book", description = "API Delete Book")
     public String deleteBook(@PathVariable("bookId") Long bookId) {
