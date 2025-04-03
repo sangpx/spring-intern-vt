@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public class UserController {
                 .build();
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('BOOK_VIEW')")
     @GetMapping("")
     @Operation(method = "GET", summary = "Get List Users", description = "API Get List Users")
     public ResponseData<List<UserDto>> getUsers() {
@@ -52,6 +55,7 @@ public class UserController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{userId}")
     @Operation(method = "PUT", summary = "Update User", description = "API Update User")
     public ResponseData<UserDto> updateUser(@PathVariable("userId") Long userId, @RequestBody UserUpdateRequest request) {
@@ -61,10 +65,20 @@ public class UserController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     @Operation(method = "DELETE", summary = "Delete User", description = "API Delete User")
     public String deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
         return "Deleted Successfully!";
+    }
+
+    @GetMapping("/my-info")
+    @Operation(method = "GET", summary = "Get Info User", description = "API Get Info User")
+    public ResponseData<UserDto> getMyInfo() {
+        return ResponseData.<UserDto>builder()
+                .message(Translator.getSuccessMessage("getInfo", EntityType.USER))
+                .data(userService.getMyInfo())
+                .build();
     }
 }

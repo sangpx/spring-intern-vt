@@ -1,8 +1,10 @@
 package com.demo.project_intern.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +18,6 @@ public class UserDto {
     private String phone;
     private LocalDate dob;
     private String address;
+    @JsonIgnore
+    private Set<RoleDto> roles;
 }

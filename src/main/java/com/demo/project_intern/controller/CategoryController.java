@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.bridge.MessageUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     @Operation(method = "POST", summary = "Create Category", description = "API Create New Category")
     public ResponseData<CategoryDto> createCategory(@RequestBody @Valid CategoryCreateRequest request) {
@@ -37,6 +39,7 @@ public class CategoryController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     @Operation(method = "GET", summary = "Get List Categories", description = "API Get List Categories")
     public ResponseData<List<CategoryDto>> getCategories() {
@@ -55,6 +58,7 @@ public class CategoryController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{categoryId}")
     @Operation(method = "PUT", summary = "Update Category", description = "API Update Category")
     public ResponseData<CategoryDto> updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryUpdateRequest request) {
@@ -64,6 +68,7 @@ public class CategoryController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{categoryId}")
     @Operation(method = "DELETE", summary = "Delete Category", description = "API Delete Category")
     public String deleteCategory(@PathVariable("categoryId") Long categoryId) {
@@ -71,12 +76,12 @@ public class CategoryController {
         return "Deleted Successfully!";
     }
 
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging Categories", description = "API Get Paging Categories")
-    public ResponseData<Page<CategoryDto>> getPagingCategories(@RequestBody SearchKeywordQuery request) {
-        return ResponseData.<Page<CategoryDto>>builder()
-                .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
-                .data(categoryService.searchCategories(request))
-                .build();
-    }
+//    @GetMapping("/paging")
+//    @Operation(method = "GET", summary = "Get Paging Categories", description = "API Get Paging Categories")
+//    public ResponseData<Page<CategoryDto>> getPagingCategories(@RequestBody SearchKeywordQuery request) {
+//        return ResponseData.<Page<CategoryDto>>builder()
+//                .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
+//                .data(categoryService.searchCategories(request))
+//                .build();
+//    }
 }

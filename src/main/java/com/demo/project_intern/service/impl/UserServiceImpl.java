@@ -1,21 +1,26 @@
 package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
+import com.demo.project_intern.constant.PredefinedRole;
 import com.demo.project_intern.dto.SearchKeywordQuery;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
+import com.demo.project_intern.entity.RoleEntity;
 import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
+import com.demo.project_intern.repository.RoleRepository;
 import com.demo.project_intern.repository.UserRepository;
 import com.demo.project_intern.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -24,6 +29,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper mapper;
 
     @Override
@@ -32,6 +38,11 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByUserName(request.getUserName())) {
             throw new BaseLibraryException(ErrorCode.USER_EXISTED);
         }
+
+        HashSet<RoleEntity> roles = new HashSet<>();
+        roleRepository.findById(Long.valueOf(PredefinedRole.USER_ROLE)).ifPresent(roles::add);
+        user.setRoles(roles);
+
         userRepository.save(user);
         return mapper.map(user, UserDto.class);
     }
@@ -85,6 +96,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getMyInfo() {
-        return null;
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        UserEntity user = userRepository.findByUserName(name)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.USER_NOT_EXISTED));
+        return mapper.map(user, UserDto.class);
     }
 }

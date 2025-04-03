@@ -14,7 +14,7 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(1003, "Not Found", HttpStatus.NOT_FOUND),
     USERNAME_INVALID(1004, "Username must be at least {min}", HttpStatus.BAD_REQUEST),
     PASSWORD_INVALID(1005, "Password must be at least {min}", HttpStatus.BAD_REQUEST),
-    UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHENTICATED(1006, "UnAuthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "You age must be at least {min} ", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_EXCEPTION(1009, "Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
@@ -27,6 +27,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(1016, "Category Not Found", HttpStatus.NOT_FOUND),
     USERNAME_EXISTED(1017, "Username already exists, please choose another username", HttpStatus.BAD_REQUEST),
     CODE_EXISTED(1018, "Code already exists, please choose another code", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN(1019, "Token invalid", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;
