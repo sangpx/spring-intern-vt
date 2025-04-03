@@ -32,6 +32,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
     @Override
+    //để jwt decoder nhận biết token đó đã bị invalid >> CustomJwtDecoder
     public Jwt decode(String token) throws JwtException {
         try {
             IntrospectResponse introspectResponse = authenticationService.introspect(IntrospectRequest
