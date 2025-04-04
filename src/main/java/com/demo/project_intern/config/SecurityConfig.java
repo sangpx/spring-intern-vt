@@ -36,6 +36,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                     .permitAll()
+                    .requestMatchers("/api/v1/library/user/export").permitAll()
                     .anyRequest() //all other anyRequest must be authenticated
                     .authenticated());
         httpSecurity.oauth2ResourceServer(oauth2 ->
