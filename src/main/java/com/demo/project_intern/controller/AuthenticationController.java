@@ -32,8 +32,8 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/authenticate")
-    ResponseData<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
+    @PostMapping("/login")
+    ResponseData<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         return ResponseData.<AuthenticationResponse>builder()
                 .message(Translator.getSuccessMessage("Authentication", EntityType.AUTHENTICATION))
                 .data(authenticationService.authenticate(request))

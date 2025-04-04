@@ -4,6 +4,7 @@ import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.BookDto;
 import com.demo.project_intern.dto.request.book.BookCreateRequest;
+import com.demo.project_intern.dto.request.book.BookSearchRequest;
 import com.demo.project_intern.dto.request.book.BookUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.BookService;
@@ -12,10 +13,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @RestController
@@ -73,18 +80,23 @@ public class BookController {
         return "Deleted successfully!";
     }
 
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging Books", description = "API Get Paging Books")
-    //TODO: dua param vao 1 class
-    public ResponseData<Page<BookDto>> getPagingBooks(@RequestParam(required = false) String keyword,
-                                                               @RequestParam(required = false) String code,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "code") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Books", description = "API Get Paging Books")
+    public ResponseData<Page<BookDto>> getPagingBooks(@RequestBody BookSearchRequest request) {
         return ResponseData.<Page<BookDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.BOOK))
-                .data(bookService.searchBooks(keyword, code, page, size, sortBy, direction))
+                .data(bookService.search(request))
                 .build();
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<Resource> exportBooks(@RequestParam("name") String name) {
+        ByteArrayOutputStream outputStream = bookService.exportBook(name);
+        ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=books_export.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(resource.contentLength())
+                .body(resource);
     }
 }

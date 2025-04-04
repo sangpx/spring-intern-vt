@@ -27,13 +27,14 @@ public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/api/v1/library/user", "/api/v1/library/auth/**"
+            "/api/v1/library/auth/**",
+            "/api/v1/library/book/paging"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                request.requestMatchers(PUBLIC_ENDPOINTS)
                     .permitAll()
                     .anyRequest() //all other anyRequest must be authenticated
                     .authenticated());
