@@ -33,6 +33,6 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
                     "AND (:#{#request.publishedYear} IS NULL OR b.publishedYear = :#{#request.publishedYear}) " +
                     "AND (:#{#request.author} IS NULL OR b.author LIKE %:#{#request.author}%) " +
                     "AND (:#{#request.publisher} IS NULL OR b.publisher LIKE %:#{#request.publisher}%)")
-    Page<BookDto> searchBooks(@Param("request") BookSearchRequest request, Pageable pageable);
+    Page<BookDto> search(@Param("request") BookSearchRequest request, Pageable pageable);
 
 }

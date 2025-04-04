@@ -121,7 +121,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public Page<BookDto> search(BookSearchRequest request) {
         Pageable pageable = PageableUtils.from(request);
-        // Truy vấn dữ liệu từ repository
-        return bookRepository.searchBooks(request, pageable);
+        return bookRepository.search(request, pageable);
     }
 }

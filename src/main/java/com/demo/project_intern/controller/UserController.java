@@ -3,6 +3,7 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
+import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.dto.UserDto;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +81,16 @@ public class UserController {
         return ResponseData.<UserDto>builder()
                 .message(Translator.getSuccessMessage("getInfo", EntityType.USER))
                 .data(userService.getMyInfo())
+                .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Users", description = "API Get Paging Users")
+    public ResponseData<Page<UserDto>> getPagingUsers(@RequestBody UserSearchRequest request) {
+        return ResponseData.<Page<UserDto>>builder()
+                .message(Translator.getSuccessMessage("getList", EntityType.USER))
+                .data(userService.search(request))
                 .build();
     }
 }

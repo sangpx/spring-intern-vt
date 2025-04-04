@@ -4,6 +4,7 @@ import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.constant.PredefinedRole;
 import com.demo.project_intern.dto.SearchKeywordQuery;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
+import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.entity.RoleEntity;
@@ -12,10 +13,12 @@ import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.RoleRepository;
 import com.demo.project_intern.repository.UserRepository;
 import com.demo.project_intern.service.UserService;
+import com.demo.project_intern.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -101,5 +104,11 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findByUserName(name)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.USER_NOT_EXISTED));
         return mapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public Page<UserDto> search(UserSearchRequest request) {
+        Pageable pageable = PageableUtils.from(request);
+        return userRepository.search(request, pageable);
     }
 }
