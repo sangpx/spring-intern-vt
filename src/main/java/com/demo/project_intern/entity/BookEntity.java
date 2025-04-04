@@ -28,7 +28,7 @@ public class BookEntity extends AbstractEntity<Long>  {
     @Column(name = "publisher")
     private String publisher;
     @Column(name = "published_year")
-    private LocalDate publishedYear;
+    private Integer publishedYear;
     @Column(name = "code")
     private String code;
 

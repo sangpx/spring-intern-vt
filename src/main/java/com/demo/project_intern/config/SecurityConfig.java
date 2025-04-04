@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/api/v1/library/user", "/api/v1/library/auth/**"
+            "/api/v1/library/user", "/api/v1/library/auth/**", "/api/v1/library/book/paging"
     };
 
     @Bean

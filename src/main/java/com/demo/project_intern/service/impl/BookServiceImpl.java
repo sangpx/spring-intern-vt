@@ -5,6 +5,7 @@ import com.demo.project_intern.dto.BookDto;
 import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.PermissionDto;
 import com.demo.project_intern.dto.request.book.BookCreateRequest;
+import com.demo.project_intern.dto.request.book.BookSearchRequest;
 import com.demo.project_intern.dto.request.book.BookUpdateRequest;
 import com.demo.project_intern.entity.BookEntity;
 import com.demo.project_intern.entity.CategoryEntity;
@@ -13,6 +14,8 @@ import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.BookRepository;
 import com.demo.project_intern.repository.CategoryRepository;
 import com.demo.project_intern.service.BookService;
+import com.demo.project_intern.service.GenericSearchService;
+import com.demo.project_intern.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -84,16 +87,6 @@ public class BookServiceImpl implements BookService {
         bookRepository.delete(book);
     }
 
-    @Override
-    public Page<BookDto> searchBooks(String keyword, String code, int page, int size, String sortBy, String direction) {
-        Sort sort = "desc".equalsIgnoreCase(direction)
-                            ? Sort.by(sortBy).descending()
-                            : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return bookRepository.searchBooks(keyword, code, pageable);
-
-    }
-
     private Set<CategoryEntity> getCategoryEntity (Set<CategoryDto> categoryDtos) {
         // Kiểm tra request.getCategories() có null không
         Set<String> categoryCodes = Optional.ofNullable(categoryDtos)
@@ -123,5 +116,12 @@ public class BookServiceImpl implements BookService {
         }
         //Return list category hợp lệ
         return new HashSet<>(categoryEntities);
+    }
+
+    @Override
+    public Page<BookDto> search(BookSearchRequest request) {
+        Pageable pageable = PageableUtils.from(request);
+        // Truy vấn dữ liệu từ repository
+        return bookRepository.searchBooks(request, pageable);
     }
 }

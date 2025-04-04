@@ -18,6 +18,6 @@ public class BookUpdateRequest {
     private String description;
     private String author;
     private String publisher;
-    private LocalDate publishedYear;
+    private Integer publishedYear;
     private Set<CategoryDto> categories;
 }

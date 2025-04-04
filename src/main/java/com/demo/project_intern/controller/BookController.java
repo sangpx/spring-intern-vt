@@ -4,6 +4,7 @@ import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.BookDto;
 import com.demo.project_intern.dto.request.book.BookCreateRequest;
+import com.demo.project_intern.dto.request.book.BookSearchRequest;
 import com.demo.project_intern.dto.request.book.BookUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.BookService;
@@ -73,18 +74,12 @@ public class BookController {
         return "Deleted successfully!";
     }
 
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging Books", description = "API Get Paging Books")
-    //TODO: dua param vao 1 class
-    public ResponseData<Page<BookDto>> getPagingBooks(@RequestParam(required = false) String keyword,
-                                                               @RequestParam(required = false) String code,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "code") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Books", description = "API Get Paging Books")
+    public ResponseData<Page<BookDto>> getPagingBooks(@RequestBody BookSearchRequest request) {
         return ResponseData.<Page<BookDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.BOOK))
-                .data(bookService.searchBooks(keyword, code, page, size, sortBy, direction))
+                .data(bookService.search(request))
                 .build();
     }
 }
