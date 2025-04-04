@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         // Check if field userName is modified
         if(!user.getUserName().equals(request.getUserName())) {
-            // Kiểm tra username đã tồn tại chưa (loại trừ user hiện tại)
+            // check username existed in system
             boolean isUsernameTaken = userRepository.existsByUserNameAndIdNot(request.getUserName(), userId);
             if (isUsernameTaken) {
                 throw new BaseLibraryException(ErrorCode.USERNAME_EXISTED);
@@ -92,7 +92,6 @@ public class UserServiceImpl implements UserService {
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setPassword(request.getPassword());
         user.setDob(request.getDob());
         user.setAddress(request.getAddress());
         user.setUpdatedAt(LocalDate.now());
