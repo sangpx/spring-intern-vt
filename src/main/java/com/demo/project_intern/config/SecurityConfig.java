@@ -28,15 +28,16 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
             "/api/v1/library/auth/**",
-            "/api/v1/library/book/paging"
+            "/api/v1/library/book/paging",
+            "/api/v1/library/book/export",
+            "/api/v1/library/user/export"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                request.requestMatchers(PUBLIC_ENDPOINTS)
                     .permitAll()
-                    .requestMatchers("/api/v1/library/user/export").permitAll()
                     .anyRequest() //all other anyRequest must be authenticated
                     .authenticated());
         httpSecurity.oauth2ResourceServer(oauth2 ->

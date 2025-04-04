@@ -16,8 +16,14 @@ import com.demo.project_intern.repository.CategoryRepository;
 import com.demo.project_intern.service.BookService;
 import com.demo.project_intern.service.GenericSearchService;
 import com.demo.project_intern.utils.PageableUtils;
+import com.demo.project_intern.utils.WriteToDisk;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +31,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -122,5 +132,45 @@ public class BookServiceImpl implements BookService {
     public Page<BookDto> search(BookSearchRequest request) {
         Pageable pageable = PageableUtils.from(request);
         return bookRepository.search(request, pageable);
+    }
+
+    @Override
+    public ByteArrayOutputStream exportBook(String name) {
+        List<BookEntity> books = bookRepository.findAll();
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Books");
+
+            // create header
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"ID","Code", "Title", "Author","Publisher", "Published Year", "Description"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+
+            int rowNum = 1;
+            for (BookEntity book : books) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(book.getId());
+                row.createCell(1).setCellValue(book.getCode());
+                row.createCell(2).setCellValue(book.getTitle());
+                row.createCell(3).setCellValue(book.getAuthor());
+                row.createCell(4).setCellValue(book.getPublisher());
+                row.createCell(5).setCellValue(book.getPublishedYear());
+                row.createCell(6).setCellValue(book.getDescription());
+            }
+
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+
+            // save file to D:/
+            WriteToDisk.saveToLocalDisk(outputStream.toByteArray(), name);
+            return outputStream;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to export data to Excel", e);
+        }
     }
 }

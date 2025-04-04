@@ -13,10 +13,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @RestController
@@ -81,5 +87,16 @@ public class BookController {
                 .message(Translator.getSuccessMessage("getList", EntityType.BOOK))
                 .data(bookService.search(request))
                 .build();
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<Resource> exportBooks(@RequestParam("name") String name) {
+        ByteArrayOutputStream outputStream = bookService.exportBook(name);
+        ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=books_export.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(resource.contentLength())
+                .body(resource);
     }
 }

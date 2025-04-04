@@ -5,6 +5,7 @@ import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public interface UserService extends GenericSearchService<UserSearchRequest, UserDto> {
@@ -14,4 +15,5 @@ public interface UserService extends GenericSearchService<UserSearchRequest, Use
     UserDto updateUser(Long userId, UserUpdateRequest request);
     void deleteUser(Long userId);
     UserDto getMyInfo();
+    ByteArrayOutputStream exportUser(String name);
 }
