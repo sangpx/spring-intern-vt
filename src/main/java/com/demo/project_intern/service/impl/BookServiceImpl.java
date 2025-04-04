@@ -98,7 +98,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private Set<CategoryEntity> getCategoryEntity (Set<CategoryDto> categoryDtos) {
-        // Kiểm tra request.getCategories() có null không
+        // Check request.getCategories() is null
         Set<String> categoryCodes = Optional.ofNullable(categoryDtos)
                 .orElse(Collections.emptySet())
                 .stream()
@@ -109,10 +109,10 @@ public class BookServiceImpl implements BookService {
             throw new BaseLibraryException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
-        // Tìm danh mục có trong DB
+        // Find categories in DB
         List<CategoryEntity> categoryEntities = categoryRepository.findByCodeIn(categoryCodes);
 
-        // Kiểm tra danh mục nào không tìm thấy
+        // Check which categories are not found
         Set<String> foundCodes = categoryEntities.stream()
                 .map(CategoryEntity::getCode)
                 .collect(Collectors.toSet());
@@ -120,11 +120,11 @@ public class BookServiceImpl implements BookService {
         Set<String> missingCategories = new HashSet<>(categoryCodes);
         missingCategories.removeAll(foundCodes);
 
-        // Nếu có danh mục không tồn tại trong DB → bắn exception
+        // If there is a category that does not exist in the DB → throw an exception
         if (!missingCategories.isEmpty()) {
             throw new BaseLibraryException(ErrorCode.CATEGORY_NOT_FOUND);
         }
-        //Return list category hợp lệ
+        //Return list category valid
         return new HashSet<>(categoryEntities);
     }
 
