@@ -28,7 +28,10 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
             "/api/v1/library/auth/**",
-            "/api/v1/library/book/paging"
+            "/api/v1/library/book/paging",
+            "/api/v1/library/category/paging",
+            "/api/v1/library/post/paging",
+            "/api/v1/library/borrowBook/paging",
     };
 
     @Bean

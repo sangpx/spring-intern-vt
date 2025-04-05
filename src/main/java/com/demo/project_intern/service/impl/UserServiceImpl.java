@@ -2,12 +2,10 @@ package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.constant.PredefinedRole;
-import com.demo.project_intern.dto.SearchKeywordQuery;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
-import com.demo.project_intern.entity.BookEntity;
 import com.demo.project_intern.entity.RoleEntity;
 import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
@@ -30,8 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;

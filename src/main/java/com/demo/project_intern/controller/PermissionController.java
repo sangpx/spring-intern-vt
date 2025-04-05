@@ -2,8 +2,11 @@ package com.demo.project_intern.controller;
 
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
+import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.PermissionDto;
+import com.demo.project_intern.dto.request.category.CategorySearchRequest;
 import com.demo.project_intern.dto.request.permission.PermissionCreateRequest;
+import com.demo.project_intern.dto.request.permission.PermissionSearchRequest;
 import com.demo.project_intern.dto.request.permission.PermissionUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.PermissionService;
@@ -76,17 +79,12 @@ public class PermissionController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging Categories", description = "API Get Paging Categories")
-    public ResponseData<Page<PermissionDto>> getPagingCategories(@RequestParam(required = false) String keyword,
-                                                               @RequestParam(required = false) String code,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "name") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Permissions", description = "API Get Paging Permissions")
+    public ResponseData<Page<PermissionDto>> getPagingCategories(@RequestBody PermissionSearchRequest request) {
         return ResponseData.<Page<PermissionDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.PERMISSION))
-                .data(permissionService.searchPermissions(keyword, code, page, size, sortBy, direction))
+                .data(permissionService.search(request))
                 .build();
     }
 }

@@ -4,6 +4,7 @@ import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.PermissionDto;
 import com.demo.project_intern.dto.RoleDto;
 import com.demo.project_intern.dto.request.role.RoleCreateRequest;
+import com.demo.project_intern.dto.request.role.RoleSearchRequest;
 import com.demo.project_intern.dto.request.role.RoleUpdateRequest;
 import com.demo.project_intern.entity.PermissionEntity;
 import com.demo.project_intern.entity.RoleEntity;
@@ -11,6 +12,7 @@ import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.PermissionRepository;
 import com.demo.project_intern.repository.RoleRepository;
 import com.demo.project_intern.service.RoleService;
+import com.demo.project_intern.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -82,23 +84,19 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.delete(role);
     }
 
-    @Override
-    public Page<RoleDto> searchRoles(String keyword, String code, int page, int size, String sortBy, String direction) {
-        Sort sort = "desc".equalsIgnoreCase(direction)
-                            ? Sort.by(sortBy).descending()
-                            : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<RoleEntity> pageRoles = roleRepository.searchRoles(keyword, code, pageable);
-        return pageRoles.map(pageRole -> mapper.map(pageRole, RoleDto.class));
-    }
-
     private Set<PermissionEntity> getPermissionEntity (Set<PermissionDto> permissionDtos) {
-        // Kiểm tra request.getPermissions() có null không
+        // check request.getPermissions() null
         Set<String> permissionCodes = Optional.ofNullable(permissionDtos)
                 .orElse(Collections.emptySet())
                 .stream()
                 .map(PermissionDto::getCode)
                 .collect(Collectors.toSet());
         return new HashSet<>(permissionRepository.findByCodeIn(permissionCodes));
+    }
+
+    @Override
+    public Page<RoleDto> search(RoleSearchRequest request) {
+        Pageable pageable = PageableUtils.from(request);
+        return roleRepository.search(request, pageable);
     }
 }

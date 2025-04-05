@@ -3,9 +3,11 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.CategoryDto;
-import com.demo.project_intern.dto.SearchKeywordQuery;
+import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.dto.request.category.CategoryCreateRequest;
+import com.demo.project_intern.dto.request.category.CategorySearchRequest;
 import com.demo.project_intern.dto.request.category.CategoryUpdateRequest;
+import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.bridge.MessageUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -76,12 +77,12 @@ public class CategoryController {
         return "Deleted Successfully!";
     }
 
-//    @GetMapping("/paging")
-//    @Operation(method = "GET", summary = "Get Paging Categories", description = "API Get Paging Categories")
-//    public ResponseData<Page<CategoryDto>> getPagingCategories(@RequestBody SearchKeywordQuery request) {
-//        return ResponseData.<Page<CategoryDto>>builder()
-//                .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
-//                .data(categoryService.searchCategories(request))
-//                .build();
-//    }
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Categories", description = "API Get Paging Categories")
+    public ResponseData<Page<CategoryDto>> getPagingCategories(@RequestBody CategorySearchRequest request) {
+        return ResponseData.<Page<CategoryDto>>builder()
+                .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
+                .data(categoryService.search(request))
+                .build();
+    }
 }

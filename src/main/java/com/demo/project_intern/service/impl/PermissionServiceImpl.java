@@ -3,11 +3,13 @@ package com.demo.project_intern.service.impl;
 import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.PermissionDto;
 import com.demo.project_intern.dto.request.permission.PermissionCreateRequest;
+import com.demo.project_intern.dto.request.permission.PermissionSearchRequest;
 import com.demo.project_intern.dto.request.permission.PermissionUpdateRequest;
 import com.demo.project_intern.entity.PermissionEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.PermissionRepository;
 import com.demo.project_intern.service.PermissionService;
+import com.demo.project_intern.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -72,12 +74,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Page<PermissionDto> searchPermissions(String keyword, String code, int page, int size, String sortBy, String direction) {
-        Sort sort = "desc".equalsIgnoreCase(direction)
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PermissionEntity> pagePermissions = permissionRepository.searchPermissions(keyword, code, pageable);
-        return pagePermissions.map(pagePermission -> mapper.map(pagePermission, PermissionDto.class));
+    public Page<PermissionDto> search(PermissionSearchRequest request) {
+        Pageable pageable = PageableUtils.from(request);
+        return permissionRepository.search(request, pageable);
     }
 }

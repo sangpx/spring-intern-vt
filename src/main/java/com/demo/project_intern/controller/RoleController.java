@@ -4,6 +4,7 @@ import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.RoleDto;
 import com.demo.project_intern.dto.request.role.RoleCreateRequest;
+import com.demo.project_intern.dto.request.role.RoleSearchRequest;
 import com.demo.project_intern.dto.request.role.RoleUpdateRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.RoleService;
@@ -76,17 +77,12 @@ public class RoleController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging Roles", description = "API Get Paging Roles")
-    public ResponseData<Page<RoleDto>> getPagingRoles(@RequestParam(required = false) String keyword,
-                                                               @RequestParam(required = false) String code,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "name") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Roles", description = "API Get Paging Roles")
+    public ResponseData<Page<RoleDto>> getPagingCategories(@RequestBody RoleSearchRequest request) {
         return ResponseData.<Page<RoleDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.ROLE))
-                .data(roleService.searchRoles(keyword, code, page, size, sortBy, direction))
+                .data(roleService.search(request))
                 .build();
     }
 }

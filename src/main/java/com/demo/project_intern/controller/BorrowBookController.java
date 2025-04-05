@@ -3,8 +3,11 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.BorrowBookDto;
+import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.request.borrowBook.BorrowBookCreateRequest;
+import com.demo.project_intern.dto.request.borrowBook.BorrowBookSearchRequest;
 import com.demo.project_intern.dto.request.borrowBook.BorrowBookUpdateRequest;
+import com.demo.project_intern.dto.request.category.CategorySearchRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.BorrowBookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,16 +72,12 @@ public class BorrowBookController {
         return "Deleted Successfully!";
     }
 
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging BorrowBooks", description = "API Get Paging BorrowBooks")
-    public ResponseData<Page<BorrowBookDto>> getPagingBorrowBooks(@RequestParam(required = false) String code,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "name") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging BorrowBooks", description = "API Get Paging BorrowBooks")
+    public ResponseData<Page<BorrowBookDto>> getPagingCategories(@RequestBody BorrowBookSearchRequest request) {
         return ResponseData.<Page<BorrowBookDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.BORROW_BOOK))
-                .data(borrowBookService.searchBorrowBooks(code, page, size, sortBy, direction))
+                .data(borrowBookService.search(request))
                 .build();
     }
 }

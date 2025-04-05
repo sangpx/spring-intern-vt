@@ -11,10 +11,16 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class RoleDto {
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Long id;
     private String code;
     private String name;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonIgnore
     private Set<PermissionDto> permissions;
+
+    public RoleDto(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
 }
