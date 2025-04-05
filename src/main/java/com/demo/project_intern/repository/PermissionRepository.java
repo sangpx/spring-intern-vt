@@ -1,5 +1,7 @@
 package com.demo.project_intern.repository;
 
+import com.demo.project_intern.dto.PermissionDto;
+import com.demo.project_intern.dto.request.permission.PermissionSearchRequest;
 import com.demo.project_intern.entity.PermissionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,12 +16,16 @@ import java.util.Set;
 @Repository
 public interface PermissionRepository extends JpaRepository<PermissionEntity, Long> {
     boolean existsByCode(String code);
-    @Query("SELECT p FROM PermissionEntity p WHERE " +
-            "(:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND (:code IS NULL OR LOWER(p.code) LIKE LOWER(CONCAT('%', :code, '%')))")
-    Page<PermissionEntity> searchPermissions (@Param("keyword") String keyword,
-                                              @Param("code") String code,
-                                              Pageable pageable);
-
     List<PermissionEntity> findByCodeIn(Set<String> permissionCodes);
+
+    @Query(value =
+            "SELECT new com.demo.project_intern.dto.PermissionDto(p.code, p.name) " +
+                    "FROM PermissionEntity p " +
+                    "WHERE (:#{#request.code} IS NULL OR :#{#request.code} = '' OR p.code LIKE %:#{#request.code}%) " +
+                    "AND (:#{#request.name} IS NULL OR :#{#request.name} = '' OR p.name LIKE %:#{#request.name}%) ",
+            countQuery =
+                    "SELECT COUNT(p) FROM PermissionEntity p " +
+                            "WHERE (:#{#request.code} IS NULL OR :#{#request.code} = '' OR p.code LIKE %:#{#request.code}%) " +
+                            "AND (:#{#request.name} IS NULL OR :#{#request.name} = '' OR p.name LIKE %:#{#request.name}%) ")
+    Page<PermissionDto> search(@Param("request") PermissionSearchRequest request, Pageable pageable);
 }

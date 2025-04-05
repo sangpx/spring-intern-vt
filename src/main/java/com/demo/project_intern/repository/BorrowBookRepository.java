@@ -1,5 +1,7 @@
 package com.demo.project_intern.repository;
 
+import com.demo.project_intern.dto.BorrowBookDto;
+import com.demo.project_intern.dto.request.borrowBook.BorrowBookSearchRequest;
 import com.demo.project_intern.entity.BorrowBookEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +18,21 @@ public interface BorrowBookRepository extends JpaRepository<BorrowBookEntity, Lo
     boolean existsByCode(String code);
     Optional<BorrowBookEntity> findByCode(String code);
 
-    @Query("SELECT bb FROM BorrowBookEntity bb WHERE " +
-            "(:code IS NULL OR LOWER(bb.code) LIKE LOWER(CONCAT('%', :code, '%')))")
-    Page<BorrowBookEntity> searchBorrowBooks (@Param("code") String code, Pageable pageable);
+    @Query(
+            value =
+    "SELECT new com.demo.project_intern.dto.BorrowBookDto(bb.borrowDate, bb.expectedReturnDate, bb.code) " +
+    "FROM BorrowBookEntity bb " +
+    "WHERE (:#{#request.code} IS NULL OR :#{#request.code} = '' OR bb.code LIKE %:#{#request.code}%) " +
+    "AND (:#{#request.borrowDateFrom} IS NULL OR bb.borrowDate >= :#{#request.borrowDateFrom}) " +
+    "AND (:#{#request.borrowDateTo} IS NULL OR bb.borrowDate <= :#{#request.borrowDateTo}) " +
+    "AND (:#{#request.expectedReturnDateFrom} IS NULL OR bb.expectedReturnDate >= :#{#request.expectedReturnDateFrom}) " +
+    "AND (:#{#request.expectedReturnDateTo} IS NULL OR bb.expectedReturnDate <= :#{#request.expectedReturnDateTo}) ",
+            countQuery =
+    "SELECT COUNT(bb) FROM BorrowBookEntity bb " +
+    "WHERE (:#{#request.code} IS NULL OR :#{#request.code} = '' OR bb.code LIKE %:#{#request.code}%) " +
+    "AND (:#{#request.borrowDateFrom} IS NULL OR bb.borrowDate >= :#{#request.borrowDateFrom}) " +
+    "AND (:#{#request.borrowDateTo} IS NULL OR bb.borrowDate <= :#{#request.borrowDateTo}) " +
+    "AND (:#{#request.expectedReturnDateFrom} IS NULL OR bb.expectedReturnDate >= :#{#request.expectedReturnDateFrom}) " +
+    "AND (:#{#request.expectedReturnDateTo} IS NULL OR bb.expectedReturnDate <= :#{#request.expectedReturnDateTo}) ")
+    Page<BorrowBookDto> search(@Param("request") BorrowBookSearchRequest request, Pageable pageable);
 }

@@ -3,6 +3,7 @@ package com.demo.project_intern.service.impl;
 import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.PostDto;
 import com.demo.project_intern.dto.request.post.PostCreateRequest;
+import com.demo.project_intern.dto.request.post.PostSearchRequest;
 import com.demo.project_intern.dto.request.post.PostUpdateRequest;
 import com.demo.project_intern.entity.BookEntity;
 import com.demo.project_intern.entity.PostEntity;
@@ -10,6 +11,7 @@ import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.BookRepository;
 import com.demo.project_intern.repository.PostRepository;
 import com.demo.project_intern.service.PostService;
+import com.demo.project_intern.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -99,19 +101,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostDto> searchPosts(String keyword, int page, int size, String sortBy, String direction) {
-        Sort sort = "desc".equalsIgnoreCase(direction)
-                            ? Sort.by(sortBy).descending()
-                            : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PostEntity> pagePosts = postRepository.searchPosts(keyword, pageable);
-        return pagePosts
-                .map(pagePost -> {
-                    PostDto postDto = mapper.map(pagePost, PostDto.class);
-                    if (pagePost.getBook() != null) {
-                        postDto.setBookId(pagePost.getBook().getId());
-                    }
-                    return postDto;
-                });
+    public Page<PostDto> search(PostSearchRequest request) {
+        Pageable pageable = PageableUtils.from(request);
+        return postRepository.search(request, pageable);
     }
 }

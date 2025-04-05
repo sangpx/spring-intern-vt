@@ -5,6 +5,7 @@ import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.BorrowBookDto;
 import com.demo.project_intern.dto.BorrowDetailDto;
 import com.demo.project_intern.dto.request.borrowBook.BorrowBookCreateRequest;
+import com.demo.project_intern.dto.request.borrowBook.BorrowBookSearchRequest;
 import com.demo.project_intern.dto.request.borrowBook.BorrowBookUpdateRequest;
 import com.demo.project_intern.entity.BookEntity;
 import com.demo.project_intern.entity.BorrowBookEntity;
@@ -15,6 +16,7 @@ import com.demo.project_intern.repository.BookRepository;
 import com.demo.project_intern.repository.BorrowBookRepository;
 import com.demo.project_intern.repository.UserRepository;
 import com.demo.project_intern.service.BorrowBookService;
+import com.demo.project_intern.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -115,12 +117,8 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     }
 
     @Override
-    public Page<BorrowBookDto> searchBorrowBooks(String code, int page, int size, String sortBy, String direction) {
-        Sort sort = "desc".equalsIgnoreCase(direction)
-                            ? Sort.by(sortBy).descending()
-                            : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<BorrowBookEntity> pageBorrowBooks = borrowBookRepository.searchBorrowBooks(code, pageable);
-        return pageBorrowBooks.map(pageBorrowBook -> mapper.map(pageBorrowBook, BorrowBookDto.class));
+    public Page<BorrowBookDto> search(BorrowBookSearchRequest request) {
+        Pageable pageable = PageableUtils.from(request);
+        return  borrowBookRepository.search(request, pageable);
     }
 }

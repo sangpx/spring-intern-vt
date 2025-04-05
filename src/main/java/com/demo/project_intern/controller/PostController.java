@@ -3,8 +3,11 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.PostDto;
+import com.demo.project_intern.dto.RoleDto;
 import com.demo.project_intern.dto.request.post.PostCreateRequest;
+import com.demo.project_intern.dto.request.post.PostSearchRequest;
 import com.demo.project_intern.dto.request.post.PostUpdateRequest;
+import com.demo.project_intern.dto.request.role.RoleSearchRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,16 +72,12 @@ public class PostController {
         return "Deleted successfully!";
     }
 
-    @GetMapping("/paging")
-    @Operation(method = "GET", summary = "Get Paging Posts", description = "API Get Paging Posts")
-    public ResponseData<Page<PostDto>> getPagingPosts(@RequestParam(required = false) String keyword,
-                                                               @RequestParam() int page,
-                                                               @RequestParam() int size,
-                                                               @RequestParam(defaultValue = "title") String sortBy,
-                                                               @RequestParam(defaultValue = "asc") String direction) {
+    @PostMapping("/paging")
+    @Operation(method = "POST", summary = "Get Paging Posts", description = "API Get Paging Posts")
+    public ResponseData<Page<PostDto>> getPagingCategories(@RequestBody PostSearchRequest request) {
         return ResponseData.<Page<PostDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.POST))
-                .data(postService.searchPosts(keyword, page, size, sortBy, direction))
+                .data(postService.search(request))
                 .build();
     }
 }
