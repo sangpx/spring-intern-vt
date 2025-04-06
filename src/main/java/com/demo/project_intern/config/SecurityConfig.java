@@ -32,6 +32,7 @@ public class SecurityConfig {
             "/api/v1/library/category/paging",
             "/api/v1/library/post/paging",
             "/api/v1/library/borrowBook/paging",
+            "/api/v1/library/user",
     };
 
     @Bean
@@ -45,8 +46,8 @@ public class SecurityConfig {
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer
                     .decoder(customJwtDecoder)
                     .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-            .authenticationEntryPoint(new JwtAuthenticationEntryPoint())); //khi ma authentication fail -> dieu huong
-        httpSecurity.csrf(AbstractHttpConfigurer::disable); // bao ve endpoint khoi Cross-Site Scripting
+            .authenticationEntryPoint(new JwtAuthenticationEntryPoint())); //when authentication fail -> direction
+        httpSecurity.csrf(AbstractHttpConfigurer::disable); // protected endpoint Cross-Site Scripting
         return httpSecurity.build();
     }
 

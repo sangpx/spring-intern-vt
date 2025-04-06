@@ -81,7 +81,7 @@ public class PermissionController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/paging")
     @Operation(method = "POST", summary = "Get Paging Permissions", description = "API Get Paging Permissions")
-    public ResponseData<Page<PermissionDto>> getPagingCategories(@RequestBody PermissionSearchRequest request) {
+    public ResponseData<Page<PermissionDto>> getPagingPermissions(@RequestBody PermissionSearchRequest request) {
         return ResponseData.<Page<PermissionDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.PERMISSION))
                 .data(permissionService.search(request))
