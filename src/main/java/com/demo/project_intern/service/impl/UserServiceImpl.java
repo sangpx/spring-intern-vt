@@ -1,11 +1,14 @@
 package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
-import com.demo.project_intern.constant.PredefinedRole;
+import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
+import com.demo.project_intern.dto.response.AssignRoleResponse;
+import com.demo.project_intern.dto.response.RemoveRoleResponse;
+import com.demo.project_intern.dto.response.RoleProcessResult;
 import com.demo.project_intern.entity.RoleEntity;
 import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
@@ -14,6 +17,7 @@ import com.demo.project_intern.repository.UserRepository;
 import com.demo.project_intern.service.UserService;
 import com.demo.project_intern.utils.PageableUtils;
 import com.demo.project_intern.utils.WriteToDisk;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,16 +26,20 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -41,17 +49,24 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper mapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.default-role-code}")
+    private String defaultRoleCode;
 
     @Override
+    @Transactional
     public UserDto createUser(UserCreateRequest request) {
         UserEntity user = mapper.map(request, UserEntity.class);
         if(userRepository.existsByUserName(request.getUserName())) {
             throw new BaseLibraryException(ErrorCode.USER_EXISTED);
         }
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<RoleEntity> roles = new HashSet<>();
-        roleRepository.findById(Long.valueOf(PredefinedRole.USER_ROLE)).ifPresent(roles::add);
-        user.setRoles(roles);
+        // assign default Role
+        RoleEntity defaultRole = roleRepository.findByName(defaultRoleCode)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
+        user.getRoles().add(defaultRole);
 
         userRepository.save(user);
         return mapper.map(user, UserDto.class);
@@ -151,5 +166,86 @@ public class UserServiceImpl implements UserService {
     public Page<UserDto> search(UserSearchRequest request) {
         Pageable pageable = PageableUtils.from(request);
         return userRepository.search(request, pageable);
+    }
+
+    @Override
+    @Transactional
+    public AssignRoleResponse assignRole(AssignRemoveRolesRequest request) {
+        UserEntity user = getUserEntity(request.getUserId());
+        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
+        RoleProcessResult result = processRoles(user, rolesToProcess, true);
+        userRepository.save(user);
+        return AssignRoleResponse
+                .builder()
+                .userId(user.getId())
+                .addedRoles(result.getProcessedRoles())
+                .duplicateRoles(result.getSkippedRoles())
+                .build();
+    }
+
+    @Override
+    public RemoveRoleResponse removeRole(AssignRemoveRolesRequest request) {
+        UserEntity user = getUserEntity(request.getUserId());
+        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
+        RoleProcessResult result = processRoles(user, rolesToProcess, false);
+        userRepository.save(user);
+        return RemoveRoleResponse
+                .builder()
+                .userId(user.getId())
+                .removedRoles(result.getProcessedRoles())
+                .notAssignedRoles(result.getSkippedRoles())
+                .build();
+    }
+
+    private UserEntity getUserEntity(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    private List<RoleEntity> validateRoles(List<Long> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            throw new IllegalArgumentException("List of role IDs cannot be empty");
+        }
+
+        List<RoleEntity> roles = roleRepository.findAllById(roleIds);
+        if (roles.size() != roleIds.size()) {
+            throw new IllegalArgumentException("Some role IDs are invalid");
+        }
+        return roles;
+    }
+
+    private RoleProcessResult processRoles(UserEntity user, List<RoleEntity> roles, boolean isAssign) {
+        Set<Long> existingRoleIds = user.getRoles()
+                .stream()
+                .map(RoleEntity::getId)
+                .collect(Collectors.toSet());
+
+        List<String> processedRoles = new ArrayList<>();
+        List<String> skippedRoles = new ArrayList<>();
+
+        for (RoleEntity role : roles) {
+            boolean alreadyHasRole = existingRoleIds.contains(role.getId());
+
+            if (isAssign) {
+                if (alreadyHasRole) {
+                    skippedRoles.add(role.getCode());
+                } else {
+                    user.getRoles().add(role);
+                    processedRoles.add(role.getCode());
+                }
+            } else { // remove
+                if (alreadyHasRole) {
+                    user.getRoles().remove(role);
+                    processedRoles.add(role.getCode());
+                } else {
+                    skippedRoles.add(role.getCode());
+                }
+            }
+        }
+        return RoleProcessResult
+                .builder()
+                .processedRoles(processedRoles)
+                .skippedRoles(skippedRoles)
+                .build();
     }
 }

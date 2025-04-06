@@ -28,6 +28,8 @@ public enum ErrorCode {
     USERNAME_EXISTED(1017, "Username already exists, please choose another username", HttpStatus.BAD_REQUEST),
     CODE_EXISTED(1018, "Code already exists, please choose another code", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(1019, "Token invalid", HttpStatus.BAD_REQUEST),
+    REQUEST_ROLES(1020, "List of role IDs cannot be empty", HttpStatus.BAD_REQUEST),
+    REQUEST_ROLES_INVALID(1021, "Some role IDs are invalid", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;

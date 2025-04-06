@@ -2,9 +2,12 @@ package com.demo.project_intern.controller;
 
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
+import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
+import com.demo.project_intern.dto.response.AssignRoleResponse;
+import com.demo.project_intern.dto.response.RemoveRoleResponse;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.service.UserService;
@@ -109,5 +112,25 @@ public class UserController {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .contentLength(resource.contentLength())
                 .body(resource);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/assignRole")
+    @Operation(method = "POST", summary = "Assign Role To User", description = "API Assign Role To User")
+    public ResponseData<AssignRoleResponse> assignRole(@RequestBody AssignRemoveRolesRequest request) {
+        return ResponseData.<AssignRoleResponse>builder()
+                .message(Translator.getSuccessMessage("assignRole", EntityType.USER))
+                .data(userService.assignRole(request))
+                .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/removeRole")
+    @Operation(method = "POST", summary = "Remove Role To User", description = "API Remove Role To User")
+    public ResponseData<RemoveRoleResponse> removeRole(@RequestBody AssignRemoveRolesRequest request) {
+        return ResponseData.<RemoveRoleResponse>builder()
+                .message(Translator.getSuccessMessage("removeRole", EntityType.USER))
+                .data(userService.removeRole(request))
+                .build();
     }
 }
