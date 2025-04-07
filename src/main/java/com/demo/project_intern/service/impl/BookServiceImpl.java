@@ -4,12 +4,12 @@ import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.BookDto;
 import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.PermissionDto;
+import com.demo.project_intern.dto.request.book.AssignRemoveCategoryRequest;
 import com.demo.project_intern.dto.request.book.BookCreateRequest;
 import com.demo.project_intern.dto.request.book.BookSearchRequest;
 import com.demo.project_intern.dto.request.book.BookUpdateRequest;
-import com.demo.project_intern.entity.BookEntity;
-import com.demo.project_intern.entity.CategoryEntity;
-import com.demo.project_intern.entity.PermissionEntity;
+import com.demo.project_intern.dto.response.*;
+import com.demo.project_intern.entity.*;
 import com.demo.project_intern.exception.BaseLibraryException;
 import com.demo.project_intern.repository.BookRepository;
 import com.demo.project_intern.repository.CategoryRepository;
@@ -172,5 +172,88 @@ public class BookServiceImpl implements BookService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to export data to Excel", e);
         }
+    }
+
+    @Override
+    public AssignCategoryResponse assignCategories(AssignRemoveCategoryRequest request) {
+        BookEntity book = getBookEntity(request.getBookId());
+        List<CategoryEntity> categoriesToProcess = validateCategories(request.getCategoryIds());
+
+        CategoryProcessResult result = processBookCategories(book, categoriesToProcess, true);
+
+        bookRepository.save(book);
+
+        return AssignCategoryResponse
+                .builder()
+                .bookId(book.getId())
+                .addedCategories(result.getProcessedCategories())
+                .duplicateCategories(result.getSkippedCategories())
+                .build();
+    }
+
+    @Override
+    public RemoveCategoryResponse removeCategories(AssignRemoveCategoryRequest request) {
+        BookEntity book = getBookEntity(request.getBookId());
+        List<CategoryEntity> categoryToProcess = validateCategories(request.getCategoryIds());
+        CategoryProcessResult result = processBookCategories(book, categoryToProcess, false);
+
+        bookRepository.save(book);
+
+        return RemoveCategoryResponse
+                .builder()
+                .bookId(book.getId())
+                .removedCategories(result.getProcessedCategories())
+                .notAssignedCategories(result.getSkippedCategories())
+                .build();
+    }
+
+    private BookEntity getBookEntity(Long bookId) {
+        if (bookId == null) {
+            throw new BaseLibraryException(ErrorCode.INVALID_KEY);
+        }
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    private List<CategoryEntity> validateCategories(List<Long> categoryIds) {
+        List<CategoryEntity> categories = categoryRepository.findAllById(categoryIds);
+        if (categories.size() != categoryIds.size()) {
+            throw new IllegalArgumentException("Some category IDs are invalid.");
+        }
+        return categories;
+    }
+
+    private CategoryProcessResult processBookCategories(BookEntity book, List<CategoryEntity> categories, boolean isAssign) {
+        Set<Long> existingCategoryIds = book.getCategories()
+                .stream()
+                .map(CategoryEntity::getId)
+                .collect(Collectors.toSet());
+
+        List<String> processedCategories = new ArrayList<>();
+        List<String> skippedCategories = new ArrayList<>();
+
+        for (CategoryEntity category : categories) {
+            boolean alreadyHasCategory = existingCategoryIds.contains(category.getId());
+            if (isAssign) {
+                if (alreadyHasCategory) {
+                    skippedCategories.add(category.getCode());
+                } else {
+                    book.getCategories().add(category);
+                    processedCategories.add(category.getCode());
+                }
+            } else { // remove
+                if (alreadyHasCategory) {
+                    book.getCategories().remove(category);
+                    processedCategories.add(category.getCode());
+                } else {
+                    skippedCategories.add(category.getCode());
+                }
+            }
+        }
+        return CategoryProcessResult
+                .builder()
+                .processedCategories(processedCategories)
+                .skippedCategories(skippedCategories)
+                .build();
     }
 }

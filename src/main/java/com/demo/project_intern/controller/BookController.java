@@ -3,10 +3,12 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.BookDto;
+import com.demo.project_intern.dto.request.book.AssignRemoveCategoryRequest;
 import com.demo.project_intern.dto.request.book.BookCreateRequest;
 import com.demo.project_intern.dto.request.book.BookSearchRequest;
 import com.demo.project_intern.dto.request.book.BookUpdateRequest;
-import com.demo.project_intern.dto.response.ResponseData;
+import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
+import com.demo.project_intern.dto.response.*;
 import com.demo.project_intern.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -89,6 +91,7 @@ public class BookController {
                 .build();
     }
 
+    @PreAuthorize("hasAuthority('BOOK_EXPORT')")
     @GetMapping("/export")
     public ResponseEntity<Resource> exportBooks(@RequestParam("name") String name) {
         ByteArrayOutputStream outputStream = bookService.exportBook(name);
@@ -98,5 +101,25 @@ public class BookController {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .contentLength(resource.contentLength())
                 .body(resource);
+    }
+
+    @PreAuthorize("hasAuthority('BOOK_CREATE')")
+    @PostMapping("/assignCategory")
+    @Operation(method = "POST", summary = "Assign Book To Category", description = "API Assign Book To Category")
+    public ResponseData<AssignCategoryResponse> assignCategory(@RequestBody AssignRemoveCategoryRequest request) {
+        return ResponseData.<AssignCategoryResponse>builder()
+                .message(Translator.getSuccessMessage("assignCategory", EntityType.BOOK))
+                .data(bookService.assignCategories(request))
+                .build();
+    }
+
+    @PreAuthorize("hasAuthority('BOOK_CREATE')")
+    @PostMapping("/removeCategory")
+    @Operation(method = "POST", summary = "Remove Book To Category", description = "API Remove Book To Category")
+    public ResponseData<RemoveCategoryResponse> removeRole(@RequestBody AssignRemoveCategoryRequest request) {
+        return ResponseData.<RemoveCategoryResponse>builder()
+                .message(Translator.getSuccessMessage("removeCategory", EntityType.BOOK))
+                .data(bookService.removeCategories(request))
+                .build();
     }
 }

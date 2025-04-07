@@ -198,18 +198,21 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserEntity getUserEntity(Long userId) {
+        if (userId == null) {
+            throw new BaseLibraryException(ErrorCode.INVALID_KEY);
+        }
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
     private List<RoleEntity> validateRoles(List<Long> roleIds) {
         if (roleIds == null || roleIds.isEmpty()) {
-            throw new IllegalArgumentException("List of role IDs cannot be empty");
+            throw new BaseLibraryException(ErrorCode.REQUEST_ROLES);
         }
 
         List<RoleEntity> roles = roleRepository.findAllById(roleIds);
         if (roles.size() != roleIds.size()) {
-            throw new IllegalArgumentException("Some role IDs are invalid");
+            throw new BaseLibraryException(ErrorCode.REQUEST_ROLES_INVALID);
         }
         return roles;
     }
