@@ -2,14 +2,12 @@ package com.demo.project_intern.dto.response;
 
 import lombok.*;
 
-import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RemoveRoleResponse {
+public class RemoveRoleResponse extends BaseRemoveResponse {
    private Long userId;
-   private List<String> removedRoles;
-   private List<String> notAssignedRoles;
 }

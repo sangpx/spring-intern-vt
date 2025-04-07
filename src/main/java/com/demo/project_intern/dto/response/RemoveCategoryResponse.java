@@ -4,12 +4,11 @@ import lombok.*;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RemoveCategoryResponse {
+public class RemoveCategoryResponse extends BaseRemoveResponse {
    private Long bookId;
-   private List<String> removedCategories;
-   private List<String> notAssignedCategories;
 }

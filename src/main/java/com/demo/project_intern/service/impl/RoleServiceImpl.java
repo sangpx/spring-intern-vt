@@ -3,9 +3,13 @@ package com.demo.project_intern.service.impl;
 import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.PermissionDto;
 import com.demo.project_intern.dto.RoleDto;
+import com.demo.project_intern.dto.request.role.AssignRemovePermissionsRequest;
 import com.demo.project_intern.dto.request.role.RoleCreateRequest;
 import com.demo.project_intern.dto.request.role.RoleSearchRequest;
 import com.demo.project_intern.dto.request.role.RoleUpdateRequest;
+import com.demo.project_intern.dto.response.*;
+import com.demo.project_intern.entity.BookEntity;
+import com.demo.project_intern.entity.CategoryEntity;
 import com.demo.project_intern.entity.PermissionEntity;
 import com.demo.project_intern.entity.RoleEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
@@ -98,5 +102,89 @@ public class RoleServiceImpl implements RoleService {
     public Page<RoleDto> search(RoleSearchRequest request) {
         Pageable pageable = PageableUtils.from(request);
         return roleRepository.search(request, pageable);
+    }
+
+    @Override
+    public AssignPermissionResponse assignPermission(AssignRemovePermissionsRequest request) {
+        RoleEntity role = getRoleEntity(request.getRoleId());
+        List<PermissionEntity> permissionToProcess = validatePermissions(request.getPermissionIds());
+        ProcessResult result = processRolePermissions(role, permissionToProcess, true);
+
+        roleRepository.save(role);
+
+        AssignPermissionResponse assignPermissionResponse = AssignPermissionResponse
+                .builder()
+                .roleId(role.getId())
+                .build();
+        assignPermissionResponse.setAdded(result.getProcessed());
+        assignPermissionResponse.setDuplicated(result.getSkipped());
+        return assignPermissionResponse;
+    }
+
+    @Override
+    public RemovePermissionResponse removePermission(AssignRemovePermissionsRequest request) {
+        RoleEntity role = getRoleEntity(request.getRoleId());
+        List<PermissionEntity> permissionToProcess = validatePermissions(request.getPermissionIds());
+        ProcessResult result = processRolePermissions(role, permissionToProcess, false);
+
+        roleRepository.save(role);
+
+        RemovePermissionResponse removePermissionResponse = RemovePermissionResponse
+                .builder()
+                .roleId(role.getId())
+                .build();
+        removePermissionResponse.setRemoved(result.getProcessed());
+        removePermissionResponse.setNotAssigned(result.getSkipped());
+        return removePermissionResponse;
+    }
+
+    private RoleEntity getRoleEntity(Long roleId) {
+        if(roleId == null) {
+            throw new BaseLibraryException(ErrorCode.INVALID_KEY);
+        }
+        return roleRepository.findById(roleId)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    private List<PermissionEntity> validatePermissions(List<Long> permissionIds) {
+        List<PermissionEntity> permissionEntities = permissionRepository.findAllById(permissionIds);
+        if (permissionEntities.size() != permissionIds.size()) {
+            throw new IllegalArgumentException("Some category IDs are invalid.");
+        }
+        return permissionEntities;
+    }
+
+    private ProcessResult processRolePermissions(RoleEntity role, List<PermissionEntity> permissions, boolean isAssign) {
+        Set<Long> existingPermissionIds = role.getPermissions()
+                .stream()
+                .map(PermissionEntity::getId)
+                .collect(Collectors.toSet());
+
+        List<String> processedPermissions = new ArrayList<>();
+        List<String> skippedPermissions = new ArrayList<>();
+
+        for (PermissionEntity permission : permissions) {
+            boolean alreadyHasPermission = existingPermissionIds.contains(permission.getId());
+            if (isAssign) {
+                if (alreadyHasPermission) {
+                    skippedPermissions.add(permission.getCode());
+                } else {
+                    role.getPermissions().add(permission);
+                    processedPermissions.add(permission.getCode());
+                }
+            } else { // remove
+                if (alreadyHasPermission) {
+                    role.getPermissions().remove(permission);
+                    processedPermissions.add(permission.getCode());
+                } else {
+                    skippedPermissions.add(permission.getCode());
+                }
+            }
+        }
+        return ProcessResult
+                .builder()
+                .processed(processedPermissions)
+                .skipped(skippedPermissions)
+                .build();
     }
 }

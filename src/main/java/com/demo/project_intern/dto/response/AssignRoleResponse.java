@@ -2,14 +2,12 @@ package com.demo.project_intern.dto.response;
 
 import lombok.*;
 
-import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AssignRoleResponse {
+public class AssignRoleResponse extends BaseAssignResponse{
    private Long userId;
-   private List<String> addedRoles;
-   private List<String> duplicateRoles;
 }

@@ -7,8 +7,8 @@ import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.dto.response.AssignRoleResponse;
+import com.demo.project_intern.dto.response.ProcessResult;
 import com.demo.project_intern.dto.response.RemoveRoleResponse;
-import com.demo.project_intern.dto.response.RoleProcessResult;
 import com.demo.project_intern.entity.RoleEntity;
 import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
@@ -173,28 +173,30 @@ public class UserServiceImpl implements UserService {
     public AssignRoleResponse assignRole(AssignRemoveRolesRequest request) {
         UserEntity user = getUserEntity(request.getUserId());
         List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
-        RoleProcessResult result = processRoles(user, rolesToProcess, true);
+        ProcessResult result = processRoles(user, rolesToProcess, true);
         userRepository.save(user);
-        return AssignRoleResponse
+        AssignRoleResponse assignRoleResponse = AssignRoleResponse
                 .builder()
                 .userId(user.getId())
-                .addedRoles(result.getProcessedRoles())
-                .duplicateRoles(result.getSkippedRoles())
                 .build();
+        assignRoleResponse.setAdded(result.getProcessed());
+        assignRoleResponse.setDuplicated(result.getSkipped());
+        return assignRoleResponse;
     }
 
     @Override
     public RemoveRoleResponse removeRole(AssignRemoveRolesRequest request) {
         UserEntity user = getUserEntity(request.getUserId());
         List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
-        RoleProcessResult result = processRoles(user, rolesToProcess, false);
+        ProcessResult result = processRoles(user, rolesToProcess, false);
         userRepository.save(user);
-        return RemoveRoleResponse
+        RemoveRoleResponse removeRoleResponse = RemoveRoleResponse
                 .builder()
                 .userId(user.getId())
-                .removedRoles(result.getProcessedRoles())
-                .notAssignedRoles(result.getSkippedRoles())
                 .build();
+        removeRoleResponse.setRemoved(result.getProcessed());
+        removeRoleResponse.setNotAssigned(result.getSkipped());
+        return removeRoleResponse;
     }
 
     private UserEntity getUserEntity(Long userId) {
@@ -217,7 +219,7 @@ public class UserServiceImpl implements UserService {
         return roles;
     }
 
-    private RoleProcessResult processRoles(UserEntity user, List<RoleEntity> roles, boolean isAssign) {
+    private ProcessResult processRoles(UserEntity user, List<RoleEntity> roles, boolean isAssign) {
         Set<Long> existingRoleIds = user.getRoles()
                 .stream()
                 .map(RoleEntity::getId)
@@ -245,10 +247,10 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        return RoleProcessResult
+        return ProcessResult
                 .builder()
-                .processedRoles(processedRoles)
-                .skippedRoles(skippedRoles)
+                .processed(processedRoles)
+                .skipped(skippedRoles)
                 .build();
     }
 }

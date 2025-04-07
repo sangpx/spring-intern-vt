@@ -179,32 +179,34 @@ public class BookServiceImpl implements BookService {
         BookEntity book = getBookEntity(request.getBookId());
         List<CategoryEntity> categoriesToProcess = validateCategories(request.getCategoryIds());
 
-        CategoryProcessResult result = processBookCategories(book, categoriesToProcess, true);
+        ProcessResult result = processBookCategories(book, categoriesToProcess, true);
 
         bookRepository.save(book);
 
-        return AssignCategoryResponse
+        AssignCategoryResponse assignCategoryResponse =  AssignCategoryResponse
                 .builder()
                 .bookId(book.getId())
-                .addedCategories(result.getProcessedCategories())
-                .duplicateCategories(result.getSkippedCategories())
                 .build();
+        assignCategoryResponse.setAdded(result.getProcessed());
+        assignCategoryResponse.setDuplicated(result.getSkipped());
+        return assignCategoryResponse;
     }
 
     @Override
     public RemoveCategoryResponse removeCategories(AssignRemoveCategoryRequest request) {
         BookEntity book = getBookEntity(request.getBookId());
         List<CategoryEntity> categoryToProcess = validateCategories(request.getCategoryIds());
-        CategoryProcessResult result = processBookCategories(book, categoryToProcess, false);
+        ProcessResult result = processBookCategories(book, categoryToProcess, false);
 
         bookRepository.save(book);
 
-        return RemoveCategoryResponse
+        RemoveCategoryResponse removeCategoryResponse = RemoveCategoryResponse
                 .builder()
                 .bookId(book.getId())
-                .removedCategories(result.getProcessedCategories())
-                .notAssignedCategories(result.getSkippedCategories())
                 .build();
+        removeCategoryResponse.setRemoved(result.getProcessed());
+        removeCategoryResponse.setNotAssigned(result.getSkipped());
+        return removeCategoryResponse;
     }
 
     private BookEntity getBookEntity(Long bookId) {
@@ -223,7 +225,7 @@ public class BookServiceImpl implements BookService {
         return categories;
     }
 
-    private CategoryProcessResult processBookCategories(BookEntity book, List<CategoryEntity> categories, boolean isAssign) {
+    private ProcessResult processBookCategories(BookEntity book, List<CategoryEntity> categories, boolean isAssign) {
         Set<Long> existingCategoryIds = book.getCategories()
                 .stream()
                 .map(CategoryEntity::getId)
@@ -250,10 +252,10 @@ public class BookServiceImpl implements BookService {
                 }
             }
         }
-        return CategoryProcessResult
+        return ProcessResult
                 .builder()
-                .processedCategories(processedCategories)
-                .skippedCategories(skippedCategories)
+                .processed(processedCategories)
+                .skipped(skippedCategories)
                 .build();
     }
 }

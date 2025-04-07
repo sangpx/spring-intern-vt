@@ -7,8 +7,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class CategoryProcessResult {
-   private List<String> processedCategories;
-   private List<String> skippedCategories;
+public class BaseAssignResponse {
+   private List<String> added;
+   private List<String> duplicated;
 }
