@@ -15,8 +15,10 @@ import com.demo.project_intern.repository.BookRepository;
 import com.demo.project_intern.repository.CategoryRepository;
 import com.demo.project_intern.service.BookService;
 import com.demo.project_intern.service.GenericSearchService;
+import com.demo.project_intern.utils.ExcelUploadService;
 import com.demo.project_intern.utils.PageableUtils;
 import com.demo.project_intern.utils.WriteToDisk;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,16 +27,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +48,9 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final ModelMapper mapper;
+
+    @Value("${app.file-path}")
+    private String filePath;
 
 
     @Override
@@ -95,6 +99,30 @@ public class BookServiceImpl implements BookService {
         BookEntity book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         bookRepository.delete(book);
+    }
+
+    @Override
+    @Transactional
+    public ByteArrayInputStream importBook(MultipartFile file) {
+        if (!ExcelUploadService.isValidExcelFile(file)) {
+            throw new BaseLibraryException(ErrorCode.FILE_VALID);
+        }
+        try {
+            ExcelUploadService.ImportResult result = ExcelUploadService.getBooksDataFromExcel(file.getInputStream());
+
+            if (!result.validBooks.isEmpty()) {
+                bookRepository.saveAll(result.validBooks);
+            }
+
+            if (!result.errorDetails.isEmpty()) {
+                ExcelUploadService.exportErrorReportToFile(result.errorDetails, filePath);
+                return ExcelUploadService.exportErrorReport(result.errorDetails);
+            }
+            // if don't have error -> don't return file error
+            return null;
+        } catch (IOException e) {
+            throw new BaseLibraryException(ErrorCode.FILE_VALID);
+        }
     }
 
     private Set<CategoryEntity> getCategoryEntity (Set<CategoryDto> categoryDtos) {

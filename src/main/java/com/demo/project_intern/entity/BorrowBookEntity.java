@@ -1,7 +1,6 @@
 package com.demo.project_intern.entity;
 
 import com.demo.project_intern.constant.BorrowStatus;
-import com.demo.project_intern.constant.BorrowType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,8 +26,6 @@ public class BorrowBookEntity extends AbstractEntity<Long>  {
     private LocalDate expectedReturnDate;
     @Column(name = "status")
     private BorrowStatus borrowStatus;
-    @Column(name = "borrow_type")
-    private BorrowType borrowType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
