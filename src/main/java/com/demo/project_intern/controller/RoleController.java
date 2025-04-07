@@ -3,10 +3,12 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.RoleDto;
+import com.demo.project_intern.dto.request.role.AssignRemovePermissionsRequest;
 import com.demo.project_intern.dto.request.role.RoleCreateRequest;
 import com.demo.project_intern.dto.request.role.RoleSearchRequest;
 import com.demo.project_intern.dto.request.role.RoleUpdateRequest;
-import com.demo.project_intern.dto.response.ResponseData;
+import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
+import com.demo.project_intern.dto.response.*;
 import com.demo.project_intern.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -83,6 +85,26 @@ public class RoleController {
         return ResponseData.<Page<RoleDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.ROLE))
                 .data(roleService.search(request))
+                .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/assignPermission")
+    @Operation(method = "POST", summary = "Assign Permission To Role", description = "API Assign Permission To Role")
+    public ResponseData<AssignPermissionResponse> assignRole(@RequestBody AssignRemovePermissionsRequest request) {
+        return ResponseData.<AssignPermissionResponse>builder()
+                .message(Translator.getSuccessMessage("assignPermission", EntityType.ROLE))
+                .data(roleService.assignPermission(request))
+                .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/removePermission")
+    @Operation(method = "POST", summary = "Remove Permission To Role", description = "API Remove Permission To Role")
+    public ResponseData<RemovePermissionResponse> removeRole(@RequestBody AssignRemovePermissionsRequest request) {
+        return ResponseData.<RemovePermissionResponse>builder()
+                .message(Translator.getSuccessMessage("removePermission", EntityType.ROLE))
+                .data(roleService.removePermission(request))
                 .build();
     }
 }

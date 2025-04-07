@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RemoveRoleResponse extends BaseRemoveResponse {
-   private Long userId;
+public class AssignPermissionResponse extends BaseAssignResponse{
+   private Long roleId;
 }
