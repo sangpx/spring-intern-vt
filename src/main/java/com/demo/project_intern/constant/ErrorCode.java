@@ -30,6 +30,10 @@ public enum ErrorCode {
     INVALID_TOKEN(1019, "Token invalid", HttpStatus.BAD_REQUEST),
     REQUEST_ROLES(1020, "List of role IDs cannot be empty", HttpStatus.BAD_REQUEST),
     REQUEST_ROLES_INVALID(1021, "Some role IDs are invalid", HttpStatus.BAD_REQUEST),
+    FILE_VALID(1022, "The file is not a valid excel file", HttpStatus.BAD_REQUEST),
+    SHEET_BOOK_NOT_FOUND(1023, "Sheet 'Books' not found in Excel file.", HttpStatus.BAD_REQUEST),
+    TITLE_MISSING(1024, "Title is missing", HttpStatus.BAD_REQUEST),
+    ERROR_READ_FILE(1025, "Error reading Excel file", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;

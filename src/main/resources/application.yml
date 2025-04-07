@@ -12,6 +12,12 @@ spring:
     show_sql: true
     hibernate:
       ddl-auto: update
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 springdoc:
   api-docs:
@@ -39,3 +45,4 @@ jwt:
 
 app:
   default-role-code: USER
+  file-path: D:/import-error-report.xlsx
