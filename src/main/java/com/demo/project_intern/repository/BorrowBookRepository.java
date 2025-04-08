@@ -1,5 +1,6 @@
 package com.demo.project_intern.repository;
 
+import com.demo.project_intern.constant.BorrowStatus;
 import com.demo.project_intern.dto.BorrowBookDto;
 import com.demo.project_intern.dto.request.borrowBook.BorrowBookSearchRequest;
 import com.demo.project_intern.entity.BorrowBookEntity;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,4 +38,6 @@ public interface BorrowBookRepository extends JpaRepository<BorrowBookEntity, Lo
     "AND (:#{#request.expectedReturnDateFrom} IS NULL OR bb.expectedReturnDate >= :#{#request.expectedReturnDateFrom}) " +
     "AND (:#{#request.expectedReturnDateTo} IS NULL OR bb.expectedReturnDate <= :#{#request.expectedReturnDateTo}) ")
     Page<BorrowBookDto> search(@Param("request") BorrowBookSearchRequest request, Pageable pageable);
+
+    List<BorrowBookEntity> findByExpectedReturnDateBetweenAndBorrowStatus(LocalDate startDate, LocalDate endDate, BorrowStatus status);
 }

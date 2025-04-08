@@ -34,6 +34,9 @@ public enum ErrorCode {
     SHEET_BOOK_NOT_FOUND(1023, "Sheet 'Books' not found in Excel file.", HttpStatus.BAD_REQUEST),
     TITLE_MISSING(1024, "Title is missing", HttpStatus.BAD_REQUEST),
     ERROR_READ_FILE(1025, "Error reading Excel file", HttpStatus.BAD_REQUEST),
+    QUANTITY_VALID(1026, "Quantity must be greater than 0.", HttpStatus.BAD_REQUEST),
+    NOT_ENOUGH_BOOK_QUANTITY(1027, "Not enough book quantity", HttpStatus.BAD_REQUEST),
+    INVALID_EXPECTED_RETURN_DATE(1027, "Expected return date must be after borrow date", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;

@@ -2,6 +2,7 @@ package com.demo.project_intern.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -32,6 +33,14 @@ public class BookEntity extends AbstractEntity<Long>  {
     @Column(name = "code")
     private String code;
 
+    @Min(0)
+    @Column(name = "total_quantity")
+    private int totalQuantity;
+
+    @Min(0)
+    @Column(name = "available_quantity")
+    private int availableQuantity;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_category",
@@ -48,6 +57,4 @@ public class BookEntity extends AbstractEntity<Long>  {
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<BorrowDetailEntity> borrowDetails = new ArrayList<>();
-
-    //TODO: add field quantity
 }

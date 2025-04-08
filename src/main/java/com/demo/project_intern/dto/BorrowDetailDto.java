@@ -1,5 +1,6 @@
 package com.demo.project_intern.dto;
 
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 @Builder
 public class BorrowDetailDto {
     private LocalDate actualReturnDate;
-    //TODO: validation quantity
+    @Min(1)
     private int quantity;
     private Long bookId;
 }
