@@ -17,11 +17,12 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SendMailCronJob {
+
     private final BorrowBookRepository borrowBookRepository;
     private final JavaMailSender mailSender;
 
-    // Chạy mỗi 1 phút
-    @Scheduled(cron = "0 */1 * * * *")
+    // run everyday at 8 am
+     @Scheduled(cron = "0 0 8 * * ?")
     public void sendReminderEmails() {
         log.info("Running reminder email scheduler...");
 
@@ -49,6 +50,6 @@ public class SendMailCronJob {
                 + "Vui lòng chuẩn bị trả sách đúng hạn để tránh các khoản phí phát sinh.\n\n"
                 + "Cảm ơn bạn!");
         mailSender.send(message);
-        log.info("Sent Email!");
+        log.info("Sent Email Successfully!");
     }
 }
