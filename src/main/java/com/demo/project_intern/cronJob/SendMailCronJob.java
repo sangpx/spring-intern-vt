@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,15 +23,14 @@ public class SendMailCronJob {
     private final JavaMailSender mailSender;
 
     // run everyday at 8 am
-     @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 0 8 * * ?")
     public void sendReminderEmails() {
         log.info("Running reminder email scheduler...");
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime targetTime = now.plusMinutes(2);
+        LocalDate targetDate = LocalDate.now().plusDays(2);
 
         List<BorrowBookEntity> borrowBooks = borrowBookRepository
-                .findByExpectedReturnDateBetweenAndBorrowStatus(now.toLocalDate(), targetTime.toLocalDate(), BorrowStatus.BORROWED);
+                .findByExpectedReturnDateBetweenAndBorrowStatus(LocalDate.now(), targetDate, BorrowStatus.BORROWED);
 
         for (BorrowBookEntity borrowBook : borrowBooks) {
             String email = borrowBook.getUser().getEmail();
