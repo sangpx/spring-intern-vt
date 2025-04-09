@@ -191,7 +191,7 @@ public class BookServiceImpl implements BookService {
             WriteToDisk.saveToLocalDisk(outputStream.toByteArray(), name);
             return outputStream;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to export data to Excel", e);
+            throw new BaseLibraryException(ErrorCode.FAILED_EXPORT_EXCEL);
         }
     }
 

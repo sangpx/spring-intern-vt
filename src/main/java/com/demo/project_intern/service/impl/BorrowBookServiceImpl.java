@@ -14,6 +14,7 @@ import com.demo.project_intern.repository.BorrowBookRepository;
 import com.demo.project_intern.repository.BorrowDetailRepository;
 import com.demo.project_intern.repository.UserRepository;
 import com.demo.project_intern.service.BorrowBookService;
+import com.demo.project_intern.utils.CommonUtil;
 import com.demo.project_intern.utils.PageableUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,8 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     private final UserRepository userRepository;
     private final ModelMapper mapper;
     private final JavaMailSender mailSender;
+    private final CommonUtil commonUtil;
+
 
 
     @Override
@@ -51,10 +54,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     public BorrowBookDto createBorrowBook(BorrowBookCreateRequest request) {
 
         //get info user from token
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-        UserEntity currentUser = userRepository.findByUserName(name)
-                .orElseThrow(() -> new BaseLibraryException(ErrorCode.USER_NOT_EXISTED));
+        UserEntity currentUser = commonUtil.getCurrentUser();
 
         // Validate dates
         validateBorrowDates(LocalDate.now(), request.getExpectedReturnDate());
@@ -149,10 +149,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     public BorrowBookDto updateBorrowBook(Long borrowBookId, BorrowBookUpdateRequest request) {
 
         //lấy thông tin người dùng từ token
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-        UserEntity currentUser = userRepository.findByUserName(name)
-                .orElseThrow(() -> new BaseLibraryException(ErrorCode.USER_NOT_EXISTED));
+        UserEntity currentUser = commonUtil.getCurrentUser();
 
         // lấy thông tin BorrowBookEntity theo id
         BorrowBookEntity borrowBook = borrowBookRepository.findById(borrowBookId)

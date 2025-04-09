@@ -1,5 +1,6 @@
 package com.demo.project_intern.service;
 
+import com.demo.project_intern.dto.CategoryBookCountDto;
 import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.request.category.CategoryCreateRequest;
 import com.demo.project_intern.dto.request.category.CategorySearchRequest;
@@ -14,4 +15,5 @@ public interface CategoryService extends GenericSearchService<CategorySearchRequ
     CategoryDto getCategory(Long categoryId);
     CategoryDto updateCategory(Long categoryId, CategoryUpdateRequest request);
     void deleteCategory(Long categoryId);
+    List<CategoryBookCountDto> getCategoryBookCounts();
 }

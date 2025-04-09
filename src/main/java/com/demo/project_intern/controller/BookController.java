@@ -94,6 +94,7 @@ public class BookController {
 
     @PreAuthorize("hasAuthority('BOOK_EXPORT')")
     @GetMapping("/export")
+    @Operation(method = "GET", summary = "Export Excel Books", description = "API Export Excel Books")
     public ResponseEntity<Resource> exportBooks(@RequestParam("name") String name) {
         ByteArrayOutputStream outputStream = bookService.exportBook(name);
         ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
@@ -105,6 +106,7 @@ public class BookController {
     }
 
     @PreAuthorize("hasAuthority('BOOK_IMPORT')")
+    @Operation(method = "POST", summary = "Import Excel Books", description = "API Import Excel Books")
     @PostMapping("/import")
     public ResponseEntity<?> importBooks(@RequestParam("file") MultipartFile file) {
         ByteArrayInputStream errorReport = bookService.importBook(file);

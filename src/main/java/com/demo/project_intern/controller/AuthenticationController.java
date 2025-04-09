@@ -11,6 +11,7 @@ import com.demo.project_intern.dto.response.IntrospectResponse;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
+    @Operation(method = "POST", summary = "Login", description = "API Login")
     ResponseData<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         return ResponseData.<AuthenticationResponse>builder()
                 .message(Translator.getSuccessMessage("Authentication", EntityType.AUTHENTICATION))
@@ -40,6 +42,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/introspect")
+    @Operation(method = "POST", summary = "Introspect", description = "API Introspect")
     ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
         return ResponseData.<IntrospectResponse>builder()
@@ -49,6 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
+    @Operation(method = "POST", summary = "Refresh", description = "API Refresh")
     ResponseData<AuthenticationResponse> refresh(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
         return ResponseData.<AuthenticationResponse>builder()
                 .message(Translator.getSuccessMessage("Refresh", EntityType.REFRESH))
@@ -57,6 +61,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
+    @Operation(method = "POST", summary = "Logout", description = "API Logout")
     ResponseData<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
         return ResponseData.<Void>builder().build();

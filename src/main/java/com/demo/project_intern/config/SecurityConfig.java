@@ -32,6 +32,7 @@ public class SecurityConfig {
             "/api/v1/library/category/paging",
             "/api/v1/library/post/paging",
             "/api/v1/library/borrowBook/paging",
+            "/api/v1/library/comment/paging",
 //            "/api/v1/library/borrowBook",
             "/api/v1/library/user",
     };

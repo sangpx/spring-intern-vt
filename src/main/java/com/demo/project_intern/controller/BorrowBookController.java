@@ -79,7 +79,7 @@ public class BorrowBookController {
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/paging")
     @Operation(method = "POST", summary = "Get Paging BorrowBooks", description = "API Get Paging BorrowBooks")
-    public ResponseData<Page<BorrowBookDto>> getPagingCategories(@RequestBody BorrowBookSearchRequest request) {
+    public ResponseData<Page<BorrowBookDto>> getPagingBorrowBooks(@RequestBody BorrowBookSearchRequest request) {
         return ResponseData.<Page<BorrowBookDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.BORROW_BOOK))
                 .data(borrowBookService.search(request))

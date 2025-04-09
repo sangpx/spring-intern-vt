@@ -1,6 +1,7 @@
 package com.demo.project_intern.service;
 
 import com.demo.project_intern.dto.BookDto;
+import com.demo.project_intern.dto.CategoryBookCountDto;
 import com.demo.project_intern.dto.request.book.*;
 import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
 import com.demo.project_intern.dto.response.AssignCategoryResponse;
@@ -8,6 +9,7 @@ import com.demo.project_intern.dto.response.AssignRoleResponse;
 import com.demo.project_intern.dto.response.RemoveCategoryResponse;
 import com.demo.project_intern.dto.response.RemoveRoleResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;

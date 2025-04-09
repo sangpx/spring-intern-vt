@@ -25,6 +25,7 @@ public class BorrowBookEntity extends AbstractEntity<Long>  {
     @Column(name = "expected_return_date")
     private LocalDate expectedReturnDate;
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private BorrowStatus borrowStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)

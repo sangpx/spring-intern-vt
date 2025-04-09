@@ -1,5 +1,6 @@
 package com.demo.project_intern.repository;
 
+import com.demo.project_intern.dto.CategoryBookCountDto;
 import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.request.category.CategorySearchRequest;
 import com.demo.project_intern.entity.CategoryEntity;
@@ -30,4 +31,10 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
                             "AND (:#{#request.name} IS NULL OR :#{#request.name} = '' OR c.name LIKE %:#{#request.name}%) " +
                             "AND (:#{#request.description} IS NULL OR :#{#request.description} = '' OR c.description LIKE %:#{#request.description}%) ")
     Page<CategoryDto> search(@Param("request") CategorySearchRequest request, Pageable pageable);
+
+    @Query("SELECT new com.demo.project_intern.dto.CategoryBookCountDto(c.code, c.name, COUNT(b)) " +
+            "FROM CategoryEntity c " +
+            "LEFT JOIN c. books b " +
+            "GROUP BY c.id, c.code, c.name")
+    List<CategoryBookCountDto> countBooksByCategory();
 }
