@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class BorrowDetailDto {
-    private LocalDate actualReturnDate;
     @Min(1)
     private int quantity;
     private Long bookId;

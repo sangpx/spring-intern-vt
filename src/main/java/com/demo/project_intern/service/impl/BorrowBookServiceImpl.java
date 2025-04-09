@@ -86,7 +86,6 @@ public class BorrowBookServiceImpl implements BorrowBookService {
                     .book(book)
                     .quantity(detailDto.getQuantity())
                     .returned(false)
-                    .actualReturnDate(detailDto.getActualReturnDate())
                     .build();
             //add detailEntity -> borrowDetails
             borrowDetails.add(detailEntity);
@@ -109,7 +108,6 @@ public class BorrowBookServiceImpl implements BorrowBookService {
                 .stream()
                 .map(detail -> BorrowDetailDto
                                                     .builder()
-                                                    .actualReturnDate(detail.getActualReturnDate())
                                                     .quantity(detail.getQuantity())
                                                     .bookId(detail.getBook().getId())
                                                     .build())
@@ -178,7 +176,6 @@ public class BorrowBookServiceImpl implements BorrowBookService {
                 BorrowDetailEntity newDetail = BorrowDetailEntity.builder()
                         .book(book)
                         .borrowBook(borrowBook)
-                        .actualReturnDate(detailDto.getActualReturnDate())
                         .quantity(detailDto.getQuantity())
                         .returned(false)
                         .build();
@@ -195,7 +192,6 @@ public class BorrowBookServiceImpl implements BorrowBookService {
                 .stream()
                 .map(detail -> BorrowDetailDto
                         .builder()
-                        .actualReturnDate(detail.getActualReturnDate())
                         .quantity(detail.getQuantity())
                         .bookId(detail.getBook().getId())
                         .build())

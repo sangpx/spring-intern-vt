@@ -46,7 +46,6 @@ public class UserController {
                 .build();
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasAuthority('BOOK_VIEW')")
     @GetMapping("")
     @Operation(method = "GET", summary = "Get List Users", description = "API Get List Users")
@@ -104,6 +103,7 @@ public class UserController {
     }
 
     @GetMapping("/export")
+    @Operation(method = "POST", summary = "Export Users", description = "API Export Users")
     public ResponseEntity<Resource> exportUsers(@RequestParam("name") String name) {
         ByteArrayOutputStream outputStream = userService.exportUser(name);
         ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
