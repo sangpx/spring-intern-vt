@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -197,37 +199,28 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public AssignCategoryResponse assignCategories(AssignRemoveCategoryRequest request) {
-        BookEntity book = getBookEntity(request.getBookId());
-        List<CategoryEntity> categoriesToProcess = validateCategories(request.getCategoryIds());
-
-        ProcessResult result = processBookCategories(book, categoriesToProcess, true);
-
-        bookRepository.save(book);
-
-        AssignCategoryResponse assignCategoryResponse =  AssignCategoryResponse
-                .builder()
-                .bookId(book.getId())
-                .build();
-        assignCategoryResponse.setAdded(result.getProcessed());
-        assignCategoryResponse.setDuplicated(result.getSkipped());
-        return assignCategoryResponse;
+        return processAssignAndRemove(
+                request,
+                true,
+                () -> AssignCategoryResponse.builder().build(),
+                (response, result) -> {
+                    response.setAdded(result.getProcessed());
+                    response.setDuplicated(result.getSkipped());
+                }
+        );
     }
 
     @Override
     public RemoveCategoryResponse removeCategories(AssignRemoveCategoryRequest request) {
-        BookEntity book = getBookEntity(request.getBookId());
-        List<CategoryEntity> categoryToProcess = validateCategories(request.getCategoryIds());
-        ProcessResult result = processBookCategories(book, categoryToProcess, false);
-
-        bookRepository.save(book);
-
-        RemoveCategoryResponse removeCategoryResponse = RemoveCategoryResponse
-                .builder()
-                .bookId(book.getId())
-                .build();
-        removeCategoryResponse.setRemoved(result.getProcessed());
-        removeCategoryResponse.setNotAssigned(result.getSkipped());
-        return removeCategoryResponse;
+        return processAssignAndRemove(
+                request,
+                false,
+                () -> RemoveCategoryResponse.builder().build(),
+                (response, result) -> {
+                    response.setRemoved(result.getProcessed());
+                    response.setNotAssigned(result.getSkipped());
+                }
+        );
     }
 
     private BookEntity getBookEntity(Long bookId) {
@@ -278,5 +271,28 @@ public class BookServiceImpl implements BookService {
                 .processed(processedCategories)
                 .skipped(skippedCategories)
                 .build();
+    }
+
+    private <T> T processAssignAndRemove(
+            AssignRemoveCategoryRequest request,
+            boolean isAssign,
+            Supplier<T> responseSupplier,
+            BiConsumer<T, ProcessResult> resultConsumer
+    ) {
+        BookEntity book = getBookEntity(request.getBookId());
+        List<CategoryEntity> categoriesToProcess = validateCategories(request.getCategoryIds());
+
+        ProcessResult result = processBookCategories(book, categoriesToProcess, isAssign);
+
+        bookRepository.save(book);
+
+        T response = responseSupplier.get();
+        if (response instanceof AssignCategoryResponse assignResponse) {
+            assignResponse.setBookId(book.getId());
+        } else if (response instanceof RemoveCategoryResponse removeResponse) {
+            removeResponse.setBookId(book.getId());
+        }
+        resultConsumer.accept(response, result);
+        return response;
     }
 }

@@ -3,6 +3,7 @@ package com.demo.project_intern.service.impl;
 import com.demo.project_intern.constant.ErrorCode;
 import com.demo.project_intern.dto.PermissionDto;
 import com.demo.project_intern.dto.RoleDto;
+import com.demo.project_intern.dto.request.book.AssignRemoveCategoryRequest;
 import com.demo.project_intern.dto.request.role.AssignRemovePermissionsRequest;
 import com.demo.project_intern.dto.request.role.RoleCreateRequest;
 import com.demo.project_intern.dto.request.role.RoleSearchRequest;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -106,36 +109,28 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public AssignPermissionResponse assignPermission(AssignRemovePermissionsRequest request) {
-        RoleEntity role = getRoleEntity(request.getRoleId());
-        List<PermissionEntity> permissionToProcess = validatePermissions(request.getPermissionIds());
-        ProcessResult result = processRolePermissions(role, permissionToProcess, true);
-
-        roleRepository.save(role);
-
-        AssignPermissionResponse assignPermissionResponse = AssignPermissionResponse
-                .builder()
-                .roleId(role.getId())
-                .build();
-        assignPermissionResponse.setAdded(result.getProcessed());
-        assignPermissionResponse.setDuplicated(result.getSkipped());
-        return assignPermissionResponse;
+        return processAssignAndRemove(
+                request,
+                true,
+                () -> AssignPermissionResponse.builder().build(),
+                (response, result) -> {
+                    response.setAdded(result.getProcessed());
+                    response.setDuplicated(result.getSkipped());
+                }
+        );
     }
 
     @Override
     public RemovePermissionResponse removePermission(AssignRemovePermissionsRequest request) {
-        RoleEntity role = getRoleEntity(request.getRoleId());
-        List<PermissionEntity> permissionToProcess = validatePermissions(request.getPermissionIds());
-        ProcessResult result = processRolePermissions(role, permissionToProcess, false);
-
-        roleRepository.save(role);
-
-        RemovePermissionResponse removePermissionResponse = RemovePermissionResponse
-                .builder()
-                .roleId(role.getId())
-                .build();
-        removePermissionResponse.setRemoved(result.getProcessed());
-        removePermissionResponse.setNotAssigned(result.getSkipped());
-        return removePermissionResponse;
+        return processAssignAndRemove(
+                request,
+                false,
+                () -> RemovePermissionResponse.builder().build(),
+                (response, result) -> {
+                    response.setRemoved(result.getProcessed());
+                    response.setNotAssigned(result.getSkipped());
+                }
+        );
     }
 
     private RoleEntity getRoleEntity(Long roleId) {
@@ -186,5 +181,25 @@ public class RoleServiceImpl implements RoleService {
                 .processed(processedPermissions)
                 .skipped(skippedPermissions)
                 .build();
+    }
+
+    private <T> T processAssignAndRemove(
+            AssignRemovePermissionsRequest request,
+            boolean isAssign,
+            Supplier<T> responseSupplier,
+            BiConsumer<T, ProcessResult> resultConsumer
+    ) {
+        RoleEntity role = getRoleEntity(request.getRoleId());
+        List<PermissionEntity> permissionsToProcess = validatePermissions(request.getPermissionIds());
+        ProcessResult result = processRolePermissions(role, permissionsToProcess, isAssign);
+        roleRepository.save(role);
+        T response = responseSupplier.get();
+        if (response instanceof AssignPermissionResponse assignResponse) {
+            assignResponse.setRoleId(role.getId());
+        } else if (response instanceof RemovePermissionResponse removeResponse) {
+            removeResponse.setRoleId(role.getId());
+        }
+        resultConsumer.accept(response, result);
+        return response;
     }
 }
