@@ -1,14 +1,14 @@
 package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
+import com.demo.project_intern.dto.request.role.AssignRemovePermissionsRequest;
 import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
 import com.demo.project_intern.dto.request.user.UserCreateRequest;
 import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.request.user.UserUpdateRequest;
 import com.demo.project_intern.dto.UserDto;
-import com.demo.project_intern.dto.response.AssignRoleResponse;
-import com.demo.project_intern.dto.response.ProcessResult;
-import com.demo.project_intern.dto.response.RemoveRoleResponse;
+import com.demo.project_intern.dto.response.*;
+import com.demo.project_intern.entity.PermissionEntity;
 import com.demo.project_intern.entity.RoleEntity;
 import com.demo.project_intern.entity.UserEntity;
 import com.demo.project_intern.exception.BaseLibraryException;
@@ -39,6 +39,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -171,32 +173,50 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public AssignRoleResponse assignRole(AssignRemoveRolesRequest request) {
-        UserEntity user = getUserEntity(request.getUserId());
-        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
-        ProcessResult result = processRoles(user, rolesToProcess, true);
-        userRepository.save(user);
-        AssignRoleResponse assignRoleResponse = AssignRoleResponse
-                .builder()
-                .userId(user.getId())
-                .build();
-        assignRoleResponse.setAdded(result.getProcessed());
-        assignRoleResponse.setDuplicated(result.getSkipped());
-        return assignRoleResponse;
+//        UserEntity user = getUserEntity(request.getUserId());
+//        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
+//        ProcessResult result = processRoles(user, rolesToProcess, true);
+//        userRepository.save(user);
+//        AssignRoleResponse assignRoleResponse = AssignRoleResponse
+//                .builder()
+//                .userId(user.getId())
+//                .build();
+//        assignRoleResponse.setAdded(result.getProcessed());
+//        assignRoleResponse.setDuplicated(result.getSkipped());
+//        return assignRoleResponse;
+        return processAssignAndRemove(
+                request,
+                true,
+                () -> AssignRoleResponse.builder().build(),
+                (response, result) -> {
+                    response.setAdded(result.getProcessed());
+                    response.setDuplicated(result.getSkipped());
+                }
+        );
     }
 
     @Override
     public RemoveRoleResponse removeRole(AssignRemoveRolesRequest request) {
-        UserEntity user = getUserEntity(request.getUserId());
-        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
-        ProcessResult result = processRoles(user, rolesToProcess, false);
-        userRepository.save(user);
-        RemoveRoleResponse removeRoleResponse = RemoveRoleResponse
-                .builder()
-                .userId(user.getId())
-                .build();
-        removeRoleResponse.setRemoved(result.getProcessed());
-        removeRoleResponse.setNotAssigned(result.getSkipped());
-        return removeRoleResponse;
+//        UserEntity user = getUserEntity(request.getUserId());
+//        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
+//        ProcessResult result = processRoles(user, rolesToProcess, false);
+//        userRepository.save(user);
+//        RemoveRoleResponse removeRoleResponse = RemoveRoleResponse
+//                .builder()
+//                .userId(user.getId())
+//                .build();
+//        removeRoleResponse.setRemoved(result.getProcessed());
+//        removeRoleResponse.setNotAssigned(result.getSkipped());
+//        return removeRoleResponse;
+        return processAssignAndRemove(
+                request,
+                false,
+                () -> RemoveRoleResponse.builder().build(),
+                (response, result) -> {
+                    response.setRemoved(result.getProcessed());
+                    response.setNotAssigned(result.getSkipped());
+                }
+        );
     }
 
     private UserEntity getUserEntity(Long userId) {
@@ -219,7 +239,7 @@ public class UserServiceImpl implements UserService {
         return roles;
     }
 
-    private ProcessResult processRoles(UserEntity user, List<RoleEntity> roles, boolean isAssign) {
+    private ProcessResult processUserRoles(UserEntity user, List<RoleEntity> roles, boolean isAssign) {
         Set<Long> existingRoleIds = user.getRoles()
                 .stream()
                 .map(RoleEntity::getId)
@@ -252,5 +272,25 @@ public class UserServiceImpl implements UserService {
                 .processed(processedRoles)
                 .skipped(skippedRoles)
                 .build();
+    }
+
+    private <T> T processAssignAndRemove(
+            AssignRemoveRolesRequest request,
+            boolean isAssign,
+            Supplier<T> responseSupplier,
+            BiConsumer<T, ProcessResult> resultConsumer
+    ) {
+        UserEntity user = getUserEntity(request.getUserId());
+        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
+        ProcessResult result = processUserRoles(user, rolesToProcess, isAssign);
+        userRepository.save(user);
+        T response = responseSupplier.get();
+        if (response instanceof AssignRoleResponse assignResponse) {
+            assignResponse.setUserId(user.getId());
+        } else if (response instanceof RemoveRoleResponse removeResponse) {
+            removeResponse.setUserId(user.getId());
+        }
+        resultConsumer.accept(response, result);
+        return response;
     }
 }

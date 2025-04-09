@@ -38,6 +38,8 @@ public enum ErrorCode {
     NOT_ENOUGH_BOOK_QUANTITY(1027, "Not enough book quantity", HttpStatus.BAD_REQUEST),
     INVALID_EXPECTED_RETURN_DATE(1028, "Expected return date must be after borrow date", HttpStatus.BAD_REQUEST),
     FAILED_EXPORT_EXCEL(1029, "Failed to export data to Excel", HttpStatus.BAD_REQUEST),
+    REQUEST_CATEGORIES_INVALID(1030, "Some category IDs are invalid", HttpStatus.BAD_REQUEST),
+    REQUEST_PERMISSIONS_INVALID(1032, "Some permission IDs are invalid", HttpStatus.BAD_REQUEST),
     ;
     private final int code;
     private final String message;
