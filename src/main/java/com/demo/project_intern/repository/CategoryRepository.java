@@ -32,9 +32,12 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
                             "AND (:#{#request.description} IS NULL OR :#{#request.description} = '' OR c.description LIKE %:#{#request.description}%) ")
     Page<CategoryDto> search(@Param("request") CategorySearchRequest request, Pageable pageable);
 
-    @Query("SELECT new com.demo.project_intern.dto.CategoryBookCountDto(c.code, c.name, COUNT(b)) " +
-            "FROM CategoryEntity c " +
-            "LEFT JOIN c. books b " +
-            "GROUP BY c.id, c.code, c.name")
-    List<CategoryBookCountDto> countBooksByCategory();
+    @Query(value =
+            "SELECT c.code AS categoryCode, c.name AS categoryName, COUNT(b.id) AS bookCount " +
+            "FROM category c " +
+            "LEFT JOIN book_category bc ON c.id = bc.category_id " +
+            "LEFT JOIN book b ON bc.book_id = b.id " +
+            "GROUP BY c.id, c.code, c.name", nativeQuery = true)
+    List<Object[]> countBooksByCategory();
+
 }

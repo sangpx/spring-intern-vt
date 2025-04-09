@@ -77,7 +77,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryBookCountDto> getCategoryBookCounts() {
-        return categoryRepository.countBooksByCategory();
+        List<Object[]> rawResults = categoryRepository.countBooksByCategory();
+        return rawResults.stream()
+                .map(row -> CategoryBookCountDto.builder()
+                        .categoryCode((String) row[0])
+                        .categoryName((String) row[1])
+                        .bookCount(((Number) row[2]).longValue())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override

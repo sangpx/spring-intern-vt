@@ -149,7 +149,7 @@ public class RoleServiceImpl implements RoleService {
     private List<PermissionEntity> validatePermissions(List<Long> permissionIds) {
         List<PermissionEntity> permissionEntities = permissionRepository.findAllById(permissionIds);
         if (permissionEntities.size() != permissionIds.size()) {
-            throw new IllegalArgumentException("Some category IDs are invalid.");
+            throw new BaseLibraryException(ErrorCode.REQUEST_PERMISSIONS_INVALID);
         }
         return permissionEntities;
     }

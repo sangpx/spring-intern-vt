@@ -241,7 +241,7 @@ public class BookServiceImpl implements BookService {
     private List<CategoryEntity> validateCategories(List<Long> categoryIds) {
         List<CategoryEntity> categories = categoryRepository.findAllById(categoryIds);
         if (categories.size() != categoryIds.size()) {
-            throw new IllegalArgumentException("Some category IDs are invalid.");
+            throw new BaseLibraryException(ErrorCode.REQUEST_CATEGORIES_INVALID);
         }
         return categories;
     }
