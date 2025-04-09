@@ -42,12 +42,8 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     private final BorrowBookRepository borrowBookRepository;
     private final BorrowDetailRepository borrowDetailRepository;
     private final BookRepository bookRepository;
-    private final UserRepository userRepository;
     private final ModelMapper mapper;
-    private final JavaMailSender mailSender;
     private final CommonUtil commonUtil;
-
-
 
     @Override
     @Transactional

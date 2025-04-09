@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -35,4 +36,13 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
                     "AND (:#{#request.publisher} IS NULL OR b.publisher LIKE %:#{#request.publisher}%)")
     Page<BookDto> search(@Param("request") BookSearchRequest request, Pageable pageable);
 
+
+    @Query(value =
+            "SELECT b.* " +
+            "FROM book b " +
+            "JOIN borrow_detail bd ON b.id = bd.book_id " +
+            "JOIN borrow_book bb ON bd.borrow_book_id = bb.id " +
+            "WHERE bb.user_id = :userId " +
+            "AND bd.returned = false ", nativeQuery = true)
+    List<BookEntity> findBorrowedBooksByUserId(@Param("userId") Long userId);
 }

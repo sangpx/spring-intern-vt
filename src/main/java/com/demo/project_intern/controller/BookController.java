@@ -142,4 +142,14 @@ public class BookController {
                 .data(bookService.removeCategories(request))
                 .build();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/books-userBorrowing/{userId}")
+    @Operation(method = "GET", summary = "Get List of books that the user is borrowing", description = "API Get List of books that the user is borrowing")
+    public ResponseData<List<BookDto>> getBooksUserBorrowing(@PathVariable("userId") Long userId) {
+        return ResponseData.<List<BookDto>>builder()
+                .message(Translator.getSuccessMessage("getList", EntityType.BOOK))
+                .data(bookService.getBorrowedBooksByUser(userId))
+                .build();
+    }
 }

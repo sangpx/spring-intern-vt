@@ -223,6 +223,15 @@ public class BookServiceImpl implements BookService {
         );
     }
 
+    @Override
+    public List<BookDto> getBorrowedBooksByUser(Long userId) {
+        List<BookEntity> bookEntities = bookRepository.findBorrowedBooksByUserId(userId);
+        return bookEntities
+                .stream()
+                .map(book -> mapper.map(book, BookDto.class))
+                .collect(Collectors.toList());
+    }
+
     private BookEntity getBookEntity(Long bookId) {
         if (bookId == null) {
             throw new BaseLibraryException(ErrorCode.INVALID_KEY);

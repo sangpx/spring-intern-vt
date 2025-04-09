@@ -8,6 +8,7 @@ import com.demo.project_intern.dto.response.AssignCategoryResponse;
 import com.demo.project_intern.dto.response.AssignRoleResponse;
 import com.demo.project_intern.dto.response.RemoveCategoryResponse;
 import com.demo.project_intern.dto.response.RemoveRoleResponse;
+import com.demo.project_intern.entity.BookEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,4 +27,5 @@ public interface BookService extends GenericSearchService<BookSearchRequest, Boo
     ByteArrayOutputStream exportBook(String name);
     AssignCategoryResponse assignCategories (AssignRemoveCategoryRequest request);
     RemoveCategoryResponse removeCategories (AssignRemoveCategoryRequest request);
+    List<BookDto> getBorrowedBooksByUser(Long userId);
 }
