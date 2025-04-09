@@ -10,9 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class BorrowBookCreateRequest {
-    private String code;
-    private LocalDate borrowDate;
     private LocalDate expectedReturnDate;
-    private Long userId;
     private Set<BorrowDetailDto> borrowDetails;
 }

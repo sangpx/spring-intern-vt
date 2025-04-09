@@ -81,7 +81,7 @@ public class RoleController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/paging")
     @Operation(method = "POST", summary = "Get Paging Roles", description = "API Get Paging Roles")
-    public ResponseData<Page<RoleDto>> getPagingCategories(@RequestBody RoleSearchRequest request) {
+    public ResponseData<Page<RoleDto>> getPagingRoles(@RequestBody RoleSearchRequest request) {
         return ResponseData.<Page<RoleDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.ROLE))
                 .data(roleService.search(request))

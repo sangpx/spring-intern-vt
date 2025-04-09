@@ -2,12 +2,11 @@ package com.demo.project_intern.controller;
 
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
+import com.demo.project_intern.dto.CategoryBookCountDto;
 import com.demo.project_intern.dto.CategoryDto;
-import com.demo.project_intern.dto.UserDto;
 import com.demo.project_intern.dto.request.category.CategoryCreateRequest;
 import com.demo.project_intern.dto.request.category.CategorySearchRequest;
 import com.demo.project_intern.dto.request.category.CategoryUpdateRequest;
-import com.demo.project_intern.dto.request.user.UserSearchRequest;
 import com.demo.project_intern.dto.response.ResponseData;
 import com.demo.project_intern.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,6 +82,15 @@ public class CategoryController {
         return ResponseData.<Page<CategoryDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
                 .data(categoryService.search(request))
+                .build();
+    }
+
+    @GetMapping("/book-count")
+    @Operation(method = "GET", summary = "Get Book Count By Category", description = "API Get Book Count By Category")
+    public ResponseData<List<CategoryBookCountDto>> getBookCountByCategory () {
+        return ResponseData.<List<CategoryBookCountDto>>builder()
+                .message(Translator.getSuccessMessage("getList", EntityType.CATEGORY))
+                .data(categoryService.getCategoryBookCounts())
                 .build();
     }
 }

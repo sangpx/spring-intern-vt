@@ -1,5 +1,6 @@
 package com.demo.project_intern.dto;
 
+import com.demo.project_intern.constant.BorrowStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ public class BorrowBookDto {
     private String code;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Set<BorrowDetailDto> borrowDetails;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private BorrowStatus borrowStatus;
 
     public BorrowBookDto(LocalDate borrowDate, LocalDate expectedReturnDate, String code) {
         this.borrowDate = borrowDate;

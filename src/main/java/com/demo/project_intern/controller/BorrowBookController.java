@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class BorrowBookController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("")
     @Operation(method = "GET", summary = "Get List BorrowBooks", description = "API Get List BorrowBooks")
     public ResponseData<List<BorrowBookDto>> getBorrowBooks() {
@@ -47,6 +49,7 @@ public class BorrowBookController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/{borrowBookId}")
     @Operation(method = "GET", summary = "Get Detail BorrowBook", description = "API Get Detail BorrowBook")
     public ResponseData<BorrowBookDto> getBorrowBook(@PathVariable("borrowBookId") Long borrowBookId) {
@@ -65,6 +68,7 @@ public class BorrowBookController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{borrowBookId}")
     @Operation(method = "DELETE", summary = "Delete BorrowBook", description = "API Delete BorrowBook")
     public String deleteBorrowBook(@PathVariable("borrowBookId") Long borrowBookId) {
@@ -72,9 +76,10 @@ public class BorrowBookController {
         return "Deleted Successfully!";
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/paging")
     @Operation(method = "POST", summary = "Get Paging BorrowBooks", description = "API Get Paging BorrowBooks")
-    public ResponseData<Page<BorrowBookDto>> getPagingCategories(@RequestBody BorrowBookSearchRequest request) {
+    public ResponseData<Page<BorrowBookDto>> getPagingBorrowBooks(@RequestBody BorrowBookSearchRequest request) {
         return ResponseData.<Page<BorrowBookDto>>builder()
                 .message(Translator.getSuccessMessage("getList", EntityType.BORROW_BOOK))
                 .data(borrowBookService.search(request))

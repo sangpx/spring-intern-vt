@@ -1,7 +1,11 @@
 package com.demo.project_intern.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -19,4 +23,8 @@ public class CategoryEntity extends AbstractEntity<Long>  {
     private String name;
     @Column(name = "description")
     private String description;
+
+    @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
+    private Set<BookEntity> books = new HashSet<>();
 }

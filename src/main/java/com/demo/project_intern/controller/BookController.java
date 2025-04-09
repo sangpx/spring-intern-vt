@@ -3,10 +3,7 @@ package com.demo.project_intern.controller;
 import com.demo.project_intern.config.Translator;
 import com.demo.project_intern.constant.EntityType;
 import com.demo.project_intern.dto.BookDto;
-import com.demo.project_intern.dto.request.book.AssignRemoveCategoryRequest;
-import com.demo.project_intern.dto.request.book.BookCreateRequest;
-import com.demo.project_intern.dto.request.book.BookSearchRequest;
-import com.demo.project_intern.dto.request.book.BookUpdateRequest;
+import com.demo.project_intern.dto.request.book.*;
 import com.demo.project_intern.dto.request.user.AssignRemoveRolesRequest;
 import com.demo.project_intern.dto.response.*;
 import com.demo.project_intern.service.BookService;
@@ -97,6 +94,7 @@ public class BookController {
 
     @PreAuthorize("hasAuthority('BOOK_EXPORT')")
     @GetMapping("/export")
+    @Operation(method = "GET", summary = "Export Excel Books", description = "API Export Excel Books")
     public ResponseEntity<Resource> exportBooks(@RequestParam("name") String name) {
         ByteArrayOutputStream outputStream = bookService.exportBook(name);
         ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
@@ -108,6 +106,7 @@ public class BookController {
     }
 
     @PreAuthorize("hasAuthority('BOOK_IMPORT')")
+    @Operation(method = "POST", summary = "Import Excel Books", description = "API Import Excel Books")
     @PostMapping("/import")
     public ResponseEntity<?> importBooks(@RequestParam("file") MultipartFile file) {
         ByteArrayInputStream errorReport = bookService.importBook(file);

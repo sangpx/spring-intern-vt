@@ -22,4 +22,6 @@ public class BookCreateRequest {
     private String publisher;
     private Integer publishedYear;
     private Set<CategoryDto> categories;
+    private int totalQuantity;
+    private int availableQuantity;
 }

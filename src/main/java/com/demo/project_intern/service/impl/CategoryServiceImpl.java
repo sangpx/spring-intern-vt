@@ -1,6 +1,7 @@
 package com.demo.project_intern.service.impl;
 
 import com.demo.project_intern.constant.ErrorCode;
+import com.demo.project_intern.dto.CategoryBookCountDto;
 import com.demo.project_intern.dto.CategoryDto;
 import com.demo.project_intern.dto.request.category.CategoryCreateRequest;
 import com.demo.project_intern.dto.request.category.CategorySearchRequest;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -71,6 +73,11 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         categoryRepository.delete(category);
+    }
+
+    @Override
+    public List<CategoryBookCountDto> getCategoryBookCounts() {
+        return categoryRepository.countBooksByCategory();
     }
 
     @Override
