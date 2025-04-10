@@ -14,7 +14,7 @@ import java.util.Locale;
 @Configuration
 public class LocalResolver extends AcceptHeaderLocaleResolver implements WebMvcConfigurer {
 
-    @Bean
+    @Bean(name = "messageSource")
     public ResourceBundleMessageSource bundleMessageSource () {
         ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
         resourceBundleMessageSource.setBasename("messages");
