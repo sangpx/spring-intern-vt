@@ -16,17 +16,13 @@ public class Translator { // switch multi-language
     public Translator(@Autowired ResourceBundleMessageSource messageSource) {
         Translator.messageSource = messageSource;
     }
-    //TODO
-    public static String toLocale(String messageCode) {
+
+    public static String toLocale(String messageCode, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(messageCode, null, locale);
+        return messageSource.getMessage(messageCode, args, locale);
     }
 
     public static String getSuccessMessage(String action, EntityType entity) {
         return messageSource.getMessage("success." + action, new Object[]{entity.getDisplayName()}, LocaleContextHolder.getLocale());
-    }
-
-    public static String getErrorMessage(String action, EntityType entity) {
-        return messageSource.getMessage("error." + action, new Object[]{entity.getDisplayName()}, LocaleContextHolder.getLocale());
     }
 }
