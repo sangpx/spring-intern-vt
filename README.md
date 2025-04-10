@@ -1,1 +1,1 @@
-# spring-intern-vt
+# spring-vt
