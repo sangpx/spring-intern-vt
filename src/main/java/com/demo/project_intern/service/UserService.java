@@ -10,6 +10,7 @@ import com.demo.project_intern.dto.response.RemoveRoleResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Set;
 
 public interface UserService extends GenericSearchService<UserSearchRequest, UserDto> {
     UserDto createUser(UserCreateRequest request);
@@ -21,4 +22,5 @@ public interface UserService extends GenericSearchService<UserSearchRequest, Use
     ByteArrayOutputStream exportUser(String name);
     AssignRoleResponse assignRole(AssignRemoveRolesRequest request);
     RemoveRoleResponse removeRole(AssignRemoveRolesRequest request);
+    Set<String> getUserPermission(Long userId);
 }
