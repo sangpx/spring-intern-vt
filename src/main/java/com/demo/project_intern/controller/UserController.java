@@ -116,6 +116,7 @@ public class UserController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/export")
     @Operation(method = "POST", summary = "Export Users", description = "API Export Users")
     public ResponseEntity<Resource> exportUsers(@RequestParam("name") String name) {
