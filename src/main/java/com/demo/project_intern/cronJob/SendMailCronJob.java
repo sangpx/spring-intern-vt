@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -41,12 +42,15 @@ public class SendMailCronJob {
     }
 
     private void sendEmail(String to, BorrowBookEntity borrowBook) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String formattedDate = borrowBook.getExpectedReturnDate().atStartOfDay().format(formatter);
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Thông báo gần đến ngày trả sách");
         message.setText("Chào bạn, \n\n"
                 + "Phiếu mượn sách mã: " + borrowBook.getCode()
-                + " của bạn sẽ đến hạn trả vào ngày: " + borrowBook.getExpectedReturnDate() + ".\n"
+                + " của bạn sẽ đến hạn trả vào ngày: " + formattedDate + ".\n"
                 + "Vui lòng chuẩn bị trả sách đúng hạn để tránh các khoản phí phát sinh.\n\n"
                 + "Cảm ơn bạn!");
         mailSender.send(message);
