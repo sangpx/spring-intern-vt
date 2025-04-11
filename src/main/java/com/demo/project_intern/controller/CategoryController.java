@@ -87,6 +87,7 @@ public class CategoryController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/book-count")
     @Operation(method = "GET", summary = "Get Book Count By Category", description = "API Get Book Count By Category")
     public ResponseData<List<CategoryBookCountDto>> getBookCountByCategory () {

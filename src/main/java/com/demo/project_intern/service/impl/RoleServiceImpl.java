@@ -65,15 +65,15 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDto getRole(Long RoleId) {
-        RoleEntity roleEntity = roleRepository.findById(RoleId)
+    public RoleDto getRole(Long roleId) {
+        RoleEntity roleEntity = roleRepository.findById(roleId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         return mapper.map(roleEntity, RoleDto.class);
     }
 
     @Override
-    public RoleDto updateRole(Long RoleId, RoleUpdateRequest request) {
-        RoleEntity role = roleRepository.findById(RoleId)
+    public RoleDto updateRole(Long roleId, RoleUpdateRequest request) {
+        RoleEntity role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         if(request.getName() != null) {
             role.setName(request.getName());
@@ -85,8 +85,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteRole(Long RoleId) {
-        RoleEntity role = roleRepository.findById(RoleId)
+    public void deleteRole(Long roleId) {
+        RoleEntity role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
         roleRepository.delete(role);
     }
