@@ -3,6 +3,7 @@ package com.demo.project_intern.cronJob;
 import com.demo.project_intern.constant.BorrowStatus;
 import com.demo.project_intern.entity.BorrowBookEntity;
 import com.demo.project_intern.repository.BorrowBookRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
@@ -25,6 +26,7 @@ public class SendMailCronJob {
 
     // run everyday at 8 am
     @Scheduled(cron = "0 0 8 * * ?")
+    @Transactional
     public void sendReminderEmails() {
         log.info("Running reminder email scheduler...");
 
