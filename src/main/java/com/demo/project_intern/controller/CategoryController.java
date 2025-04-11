@@ -71,9 +71,11 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{categoryId}")
     @Operation(method = "DELETE", summary = "Delete Category", description = "API Delete Category")
-    public String deleteCategory(@PathVariable("categoryId") Long categoryId) {
+    public ResponseData<Void> deleteCategory(@PathVariable("categoryId") Long categoryId) {
         categoryService.deleteCategory(categoryId);
-        return "Deleted Successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.CATEGORY))
+                .build();
     }
 
     @PostMapping("/paging")

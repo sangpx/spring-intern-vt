@@ -15,7 +15,8 @@ public enum EntityType {
     BOOK("Book"),
     AUTHENTICATION("Authentication"),
     REFRESH("Refresh"),
-    INTROSPECT("Introspect");
+    INTROSPECT("Introspect"),
+    LOGOUT("Logout");
 
     private final String displayName;
 

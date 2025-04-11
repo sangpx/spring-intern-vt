@@ -78,9 +78,11 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{bookId}")
     @Operation(method = "DELETE", summary = "Delete Book", description = "API Delete Book")
-    public String deleteBook(@PathVariable("bookId") Long bookId) {
+    public ResponseData<Void> deleteBook(@PathVariable("bookId") Long bookId) {
         bookService.deleteBook(bookId);
-        return "Deleted successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.BOOK))
+                .build();
     }
 
     @PostMapping("/paging")

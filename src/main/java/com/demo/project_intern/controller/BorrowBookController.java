@@ -71,9 +71,11 @@ public class BorrowBookController {
     @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{borrowBookId}")
     @Operation(method = "DELETE", summary = "Delete BorrowBook", description = "API Delete BorrowBook")
-    public String deleteBorrowBook(@PathVariable("borrowBookId") Long borrowBookId) {
+    public ResponseData<Void> deleteBorrowBook(@PathVariable("borrowBookId") Long borrowBookId) {
         borrowBookService.deleteBorrowBook(borrowBookId);
-        return "Deleted Successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.BORROW_BOOK))
+                .build();
     }
 
     @PreAuthorize("hasRole('LIBRARIAN')")

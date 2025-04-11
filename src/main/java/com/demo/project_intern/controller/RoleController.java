@@ -73,9 +73,11 @@ public class RoleController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{roleId}")
     @Operation(method = "DELETE", summary = "Delete Role", description = "API Delete Role")
-    public String deleteRole(@PathVariable("roleId") Long roleId) {
+    public ResponseData<Void> deleteRole(@PathVariable("roleId") Long roleId) {
         roleService.deleteRole(roleId);
-        return "Deleted Successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.ROLE))
+                .build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
