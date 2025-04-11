@@ -75,9 +75,11 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     @Operation(method = "DELETE", summary = "Delete Comment", description = "API Delete Comment")
-    public String deleteComment(@PathVariable("commentId") Long commentId) {
-        commentService.deleteComment(commentId);
-        return "Deleted successfully!";
+    public ResponseData<Void> deleteComment(@PathVariable("commentId") Long commentId) {
+        commentService.deleteComment(commentId);return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.COMMENT))
+                .build();
+
     }
 
     @PostMapping("/paging")

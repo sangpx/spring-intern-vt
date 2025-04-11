@@ -72,9 +72,11 @@ public class PostController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{postId}")
     @Operation(method = "DELETE", summary = "Delete Post", description = "API Delete Post")
-    public String deletePost(@PathVariable("postId") Long postId) {
+    public ResponseData<Void> deletePost(@PathVariable("postId") Long postId) {
         postService.deletePost(postId);
-        return "Deleted successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.POST))
+                .build();
     }
 
     @PostMapping("/paging")

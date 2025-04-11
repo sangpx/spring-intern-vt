@@ -73,9 +73,11 @@ public class PermissionController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{permissionId}")
     @Operation(method = "DELETE", summary = "Delete Permission", description = "API Delete Permission")
-    public String deletePermission(@PathVariable("permissionId") Long permissionId) {
+    public ResponseData<Void> deletePermission(@PathVariable("permissionId") Long permissionId) {
         permissionService.deletePermission(permissionId);
-        return "Deleted Successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.PERMISSION))
+                .build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")

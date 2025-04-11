@@ -78,9 +78,11 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     @Operation(method = "DELETE", summary = "Delete User", description = "API Delete User")
-    public String deleteUser(@PathVariable("userId") Long userId) {
+    public ResponseData<Void> deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
-        return "Deleted Successfully!";
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("delete", EntityType.USER))
+                .build();
     }
 
     @GetMapping("/my-info")

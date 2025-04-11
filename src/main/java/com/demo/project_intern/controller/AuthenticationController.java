@@ -42,7 +42,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/introspect")
-    @Operation(method = "POST", summary = "Introspect", description = "API Introspect")
+    @Operation(method = "POST", summary = "Introspect Token", description = "API Introspect Token")
     ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
         return ResponseData.<IntrospectResponse>builder()
@@ -52,7 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    @Operation(method = "POST", summary = "Refresh", description = "API Refresh")
+    @Operation(method = "POST", summary = "Refresh Token", description = "API Refresh Token")
     ResponseData<AuthenticationResponse> refresh(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
         return ResponseData.<AuthenticationResponse>builder()
                 .message(Translator.getSuccessMessage("Refresh", EntityType.REFRESH))
@@ -64,6 +64,8 @@ public class AuthenticationController {
     @Operation(method = "POST", summary = "Logout", description = "API Logout")
     ResponseData<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
-        return ResponseData.<Void>builder().build();
+        return ResponseData.<Void>builder()
+                .message(Translator.getSuccessMessage("Logout", EntityType.LOGOUT))
+                .build();
     }
 }
