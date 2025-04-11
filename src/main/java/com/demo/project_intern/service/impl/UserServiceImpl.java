@@ -173,17 +173,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public AssignRoleResponse assignRole(AssignRemoveRolesRequest request) {
-//        UserEntity user = getUserEntity(request.getUserId());
-//        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
-//        ProcessResult result = processRoles(user, rolesToProcess, true);
-//        userRepository.save(user);
-//        AssignRoleResponse assignRoleResponse = AssignRoleResponse
-//                .builder()
-//                .userId(user.getId())
-//                .build();
-//        assignRoleResponse.setAdded(result.getProcessed());
-//        assignRoleResponse.setDuplicated(result.getSkipped());
-//        return assignRoleResponse;
         return processAssignAndRemove(
                 request,
                 true,
@@ -197,17 +186,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RemoveRoleResponse removeRole(AssignRemoveRolesRequest request) {
-//        UserEntity user = getUserEntity(request.getUserId());
-//        List<RoleEntity> rolesToProcess = validateRoles(request.getRoleIds());
-//        ProcessResult result = processRoles(user, rolesToProcess, false);
-//        userRepository.save(user);
-//        RemoveRoleResponse removeRoleResponse = RemoveRoleResponse
-//                .builder()
-//                .userId(user.getId())
-//                .build();
-//        removeRoleResponse.setRemoved(result.getProcessed());
-//        removeRoleResponse.setNotAssigned(result.getSkipped());
-//        return removeRoleResponse;
         return processAssignAndRemove(
                 request,
                 false,
@@ -217,6 +195,18 @@ public class UserServiceImpl implements UserService {
                     response.setNotAssigned(result.getSkipped());
                 }
         );
+    }
+
+    @Override
+    public Set<String> getUserPermission(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseLibraryException(ErrorCode.RESOURCE_NOT_FOUND));
+        return user.getRoles()
+                .stream()
+                .flatMap(role -> role.getPermissions()
+                        .stream()
+                        .map(PermissionEntity::getName))
+                .collect(Collectors.toSet());
     }
 
     private UserEntity getUserEntity(Long userId) {

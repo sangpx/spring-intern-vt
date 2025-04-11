@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("${api.base-path}/user")
@@ -56,12 +57,23 @@ public class UserController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{userId}")
     @Operation(method = "GET", summary = "Get Detail User", description = "API Get Detail User")
     public ResponseData<UserDto> getUser(@PathVariable("userId") Long userId) {
         return ResponseData.<UserDto>builder()
                 .message(Translator.getSuccessMessage("getDetail", EntityType.USER))
                 .data(userService.getUser(userId))
+                .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getPermissionOfUser/{userId}")
+    @Operation(method = "GET", summary = "Get Permission Of User", description = "API Get Permission Of User")
+    public ResponseData<Set<String>> getPermissionOfUser(@PathVariable("userId") Long userId) {
+        return ResponseData.<Set<String>>builder()
+                .message(Translator.getSuccessMessage("getList", EntityType.PERMISSION))
+                .data(userService.getUserPermission(userId))
                 .build();
     }
 
